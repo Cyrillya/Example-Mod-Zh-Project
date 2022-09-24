@@ -1,17 +1,21 @@
-using Terraria.GameContent.UI;
+﻿using Terraria.GameContent.UI;
 using Terraria.ModLoader;
 
 namespace ExampleMod
 {
-	// This is a partial class, meaning some of its parts were split into other files. See ExampleMod.*.cs for other portions.
+	// 注意 partial 关键字，这是一个分部类型，也就是说其内容被拆分到了好几个其他的文件中
+	// 你可以通过其他的 ExampleMod.*.cs 文件来了解其全部内容
+	// 附: 微软关于分部类型的文档: https://learn.microsoft.com/zh-cn/dotnet/csharp/language-reference/keywords/partial-type
 	public partial class ExampleMod : Mod
 	{
 		public const string AssetPath = $"{nameof(ExampleMod)}/Assets/";
 
+		// 这个变量用来存储一个自定义的货币类型（类比一下原版的护卫奖章）
+		// 如果你在用 Visual Studio 的话，可以右键变量名选择“查找所有引用”来看看他都被用在了哪里
 		public static int ExampleCustomCurrencyId;
 
 		public override void Load() {
-			// Registers a new custom currency
+			// 注册一个新的货币类型
 			ExampleCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new Content.Currencies.ExampleCustomCurrency(ModContent.ItemType<Content.Items.ExampleItem>(), 999L, "Mods.ExampleMod.Currencies.ExampleCustomCurrency"));
 		}
 
