@@ -36,7 +36,7 @@ namespace ExampleMod.Content.Items.Weapons
 			Item.useTime = 20;
 			Item.useAnimation = 20; // 物品使用动画播放一次所需的时间，这里建议和 useTime 设置成一样的值
 			
-			// 这个物品能不能自动挥舞
+			// 这个物品默认能不能自动挥舞
 			// 附: 自动挥舞中文Wiki: https://terraria.wiki.gg/zh/wiki/%E8%87%AA%E5%8A%A8%E6%8C%A5%E8%88%9E
 			Item.autoReuse = true;
 

@@ -1,4 +1,4 @@
-using ExampleMod.Content.Projectiles;
+﻿using ExampleMod.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -13,43 +13,44 @@ namespace ExampleMod.Content.Items.Weapons
 	{
 		public override void SetStaticDefaults() {
 			Tooltip.SetDefault("This is a modded gun.");
+			Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "这是一把枪");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
 		public override void SetDefaults() {
-			// Common Properties
-			Item.width = 62; // Hitbox width of the item.
-			Item.height = 32; // Hitbox height of the item.
+			// 普遍属性
+			Item.width = 62; // 物品的碰撞箱宽度(像素)
+			Item.height = 32; // 物品的碰撞箱高度(像素)
 			Item.scale = 0.75f;
-			Item.rare = ItemRarityID.Green; // The color that the item's name will be in-game.
+			Item.rare = ItemRarityID.Green; // 物品稀有度
 
-			// Use Properties
-			Item.useTime = 8; // The item's use time in ticks (60 ticks == 1 second.)
-			Item.useAnimation = 8; // The length of the item's use animation in ticks (60 ticks == 1 second.)
-			Item.useStyle = ItemUseStyleID.Shoot; // How you use the item (swinging, holding out, etc.)
-			Item.autoReuse = true; // Whether or not you can hold click to automatically use it again.
+			// 使用属性
+			Item.useTime = 8; // 物品实际使用一次所需时间 (帧) (60帧=1秒)
+			Item.useAnimation = 8; // 物品动画播放一次所需时间 (帧) (60帧=1秒)
+			Item.useStyle = ItemUseStyleID.Shoot; // 物品的使用类型
+			Item.autoReuse = true; // 这个物品默认能不能自动挥舞
 			
-			// The sound that this item plays when used.
+			// 物品被使用时播放的声音
 			Item.UseSound = new SoundStyle($"{nameof(ExampleMod)}/Assets/Sounds/Items/Guns/ExampleGun") {
 				Volume = 0.9f,
 				PitchVariance = 0.2f,
 				MaxInstances = 3,
 			};
 
-			// Weapon Properties
-			Item.DamageType = DamageClass.Ranged; // Sets the damage type to ranged.
-			Item.damage = 20; // Sets the item's damage. Note that projectiles shot by this weapon will use its and the used ammunition's damage added together.
-			Item.knockBack = 5f; // Sets the item's knockback. Note that projectiles shot by this weapon will use its and the used ammunition's knockback added together.
-			Item.noMelee = true; // So the item's animation doesn't do damage.
+			// 武器属性
+			Item.DamageType = DamageClass.Ranged; // 伤害类型设置为远程
+			Item.damage = 20; // 物品基础伤害，注意: 射出的射弹伤害=武器伤害+弹药伤害
+			Item.knockBack = 5f; // 物品基础击退，注意: 射出的射弹击退=武器击退+弹药击退
+			Item.noMelee = true; // 让这个物品的使用动画不会造成伤害 (指拿枪杆子打人)
 
-			// Gun Properties
-			Item.shoot = ProjectileID.PurificationPowder; // For some reason, all the guns in the vanilla source have this.
-			Item.shootSpeed = 16f; // The speed of the projectile (measured in pixels per frame.)
-			Item.useAmmo = AmmoID.Bullet; // The "ammo Id" of the ammo item that this weapon uses. Ammo IDs are magic numbers that usually correspond to the item id of one item that most commonly represent the ammo type.
+			// 枪属性
+			Item.shoot = ProjectileID.PurificationPowder; // 出于某种原因，原版枪的 Item.shoot 都是这么设置的，实际射弹基于弹药以及 Shoot() 相关代码
+			Item.shootSpeed = 16f; // 射弹的速度 (像素/帧) (比如这里是每帧16像素，也就是960像素每秒，即60物块每秒)
+			Item.useAmmo = AmmoID.Bullet; // 物品使用的弹药类型ID，用 AmmoID.XX 来选一个原版弹药类型，这里是所有子弹的意思
 		}
-
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		
+		// 这里写的是合成配方，合成配方在 Content/ExampleRecipes.cs 有更详尽的介绍
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<ExampleItem>()
@@ -57,79 +58,79 @@ namespace ExampleMod.Content.Items.Weapons
 				.Register();
 		}
 
-		// This method lets you adjust position of the gun in the player's hands. Play with these values until it looks good with your graphics.
+		// 通过这个重写函数修改武器持握在玩家手上时的位置 (让他握着枪柄而不是反重力悬空)
 		public override Vector2? HoldoutOffset() {
 			return new Vector2(2f, -2f);
 		}
-
-		//TODO: Move this to a more specifically named example. Say, a paint gun?
+		
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) {
-			// Every projectile shot from this gun has a 1/3 chance of being an ExampleInstancedProjectile
+			// 由这把枪射出的射弹有 1/3 的概率变成 ExampleInstancedProjectile
 			if (Main.rand.NextBool(3)) {
 				type = ModContent.ProjectileType<ExampleInstancedProjectile>();
 			}
 		}
 
 		/*
-		* Feel free to uncomment any of the examples below to see what they do
-		*/
+		 * 你可以取消某个注释掉的代码段来看看效果是什么
+		 * 注意把上面已有的 ModifyShootStats 注释掉，VS快捷键为选择后按下 Ctrl+K 与 Ctrl+/
+		 */
 
-		// What if I wanted it to work like Uzi, replacing regular bullets with High Velocity Bullets?
-		// Uzi/Molten Fury style: Replace normal Bullets with High Velocity
+		// 和乌兹冲锋枪一样，将普通子弹替换成高速子弹
 		/*public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) {
-			if (type == ProjectileID.Bullet) { // or ProjectileID.WoodenArrowFriendly
-				type = ProjectileID.BulletHighVelocity; // or ProjectileID.FireArrow;
+			if (type == ProjectileID.Bullet) { // 注意是 ProjectileID 而不是别的什么 ItemID
+				type = ProjectileID.BulletHighVelocity;
 			}
 		}*/
-
-		// What if I wanted multiple projectiles in a even spread? (Vampire Knives)
-		// Even Arc style: Multiple Projectile, Even Spread
+		
+		// 和吸血鬼刀一样，圆弧式随机角度扩散
 		/*public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			float numberProjectiles = 3 + Main.rand.Next(3); // 3, 4, or 5 shots
-			float rotation = MathHelper.ToRadians(45);
+			// 方法 Main.rand.Next(N) 返回一个范围在 [0, N-1] 范围内的随机整数，即 Main.rand.Next(3) 即为 0, 1, 2 中随机一个整数
+			// 因此 numberProjectiles 为范围在 [3, 5] 内的随机整数
+			float numberProjectiles = 3 + Main.rand.Next(3);
+			float rotation = MathHelper.ToRadians(45); // MathHelper.ToRadians(N) 将角度制 N° 转换为对应的弧度制值
 
 			position += Vector2.Normalize(velocity) * 45f;
 
 			for (int i = 0; i < numberProjectiles; i++) {
-				Vector2 perturbedSpeed = velocity.RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1))) * .2f; // Watch out for dividing by 0 if there is only 1 projectile.
+				Vector2 perturbedSpeed = velocity.RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numberProjectiles - 1))) * .2f;
 				Projectile.NewProjectile(source, position, perturbedSpeed, type, damage, knockback, player.whoAmI);
 			}
 
-			return false; // return false to stop vanilla from calling Projectile.NewProjectile.
+			return false; // 返回 false 以防止原版的 Projectile.NewProjectile 代码运行导致多生成一个射弹
 		}*/
 
-		// How can I make the shots appear out of the muzzle exactly?
-		// Also, when I do this, how do I prevent shooting through tiles?
+		// 让子弹准确地从枪口处出现，并且子弹不会因枪口太长而穿墙
+		// 默认情况下使用物品的射弹都是从玩家中心出现的
 		/*public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) {
-			Vector2 muzzleOffset = Vector2.Normalize(velocity) * 25f;
+			Vector2 muzzleOffset = Vector2.Normalize(velocity) * 25f; // 25是枪杆的长度 (像素)
 
 			if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0)) {
 				position += muzzleOffset;
 			}
 		}*/
 
-		// How can I get a "Clockwork Assault Rifle" effect?
-		// 3 round burst, only consume 1 ammo for burst. Delay between bursts, use reuseDelay
-		// Make the following changes to SetDefaults():
+		// 发条式突击步枪的效果: 三连发，只消耗一发子弹
+		// 连发之间可以通过 reuseDelay 设置间隔
+		// 将下列更改写到 SetDefaults() 中:
 		/*
-			item.useAnimation = 12;
-			item.useTime = 4; // one third of useAnimation
-			item.reuseDelay = 14;
-			item.consumeAmmoOnLastShotOnly = true;
+			Item.useAnimation = 12;
+			Item.useTime = 4; // useAnimation 的 1/3 (也就是一次动画中实际包含三次使用)
+			Item.reuseDelay = 14;
+			Item.consumeAmmoOnLastShotOnly = true;
 		*/
 
-		// How can I shoot 2 different projectiles at the same time?
+		// 同时发射两发不同的射弹
 		/*public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			// Here we manually spawn the 2nd projectile, manually specifying the projectile type that we wish to shoot.
+			// 生成第二发射弹，并将射弹ID设置为我们想要的某个射弹
 			Projectile.NewProjectile(source, position, velocity, ProjectileID.GrenadeI, damage, knockback, player.whoAmI);
 
-			// By returning true, the vanilla behavior will take place, which will shoot the 1st projectile, the one determined by the ammo.
+			// 返回 true 即执行原版发射行为，即生成一个基于使用的弹药的射弹
 			return true;
 		}*/
-
-		// How can I choose between several projectiles randomly?
+		
+		// 从多个不同的射弹中随机选择一个
 		/*public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) {
-			// Here we randomly set type to either the original (as defined by the ammo), a vanilla projectile, or a mod projectile.
+			// 从以下射弹中随机选一个: 原射弹 (基于使用的弹药)、金子弹和模组自制的一个射弹
 			type = Main.rand.Next(new int[] { type, ProjectileID.GoldenBullet, ModContent.ProjectileType<Projectiles.ExampleBullet>() });
 		}*/
 	}
