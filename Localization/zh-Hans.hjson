@@ -1,0 +1,174 @@
+# 你可能会发现用这个.hjson来翻译你的mod更容易些
+# .hjson文件包含由文件名指定的语言的翻译。（确保这个文件是以UTF-8编码保存的）
+# 语言可以有：英语（“en-US”），德语（“de-DE”），意大利语（“it-IT”），法语（“fr-FR”），西班牙语（“es-ES”），俄语（“ru-RU”），汉语（“zh-Hans”），葡萄牙语（“pt-BR”），和波兰语（“pl-PL”）
+# ExampleMod中我们在一个叫做 Localization 的文件夹里组织好了这些文件。每种语言一个文件使得整合并维护翻译变得极其容易
+# 每一个.hjson里的翻译条目包含一个键（key）和一个值（value）。这些键由以下JSON规则决定 [https://www.w3schools.com/js/js_json_syntax.asp]
+# 键自动继承 “Mods.模组名称”，如果你想代入（如 Paper Airplane 中的一样），使用 Language.GetTextValue 或 Network text，这会很有用
+# 以下是目前自动生成的键：ItemName（物品名称），ItemTooltip（物品描述），BuffName（状态效果名称），BuffDescription（状态效果描述），ProjectileName（射弹名称），NPCName（NPC名称），MapObject（地图物件），和 Prefix（前缀）
+
+Mods: {
+	ExampleMod: {
+		Config: {
+			ItemHeader: Items
+			
+			SampleEnumLabels: {
+				Peculiar: Very Peculiar
+			}
+			
+			ExampleWingsToggle: {
+				Label: ExampleWings Toggle
+				Tooltip: Enables or disables the ExampleWings item
+			}
+		}
+		
+		Common: {
+			PaperAirplane: Paper Airplane
+			LocalizedLabel: This Label is from the localization files: {$Mods.ExampleMod.Common.PaperAirplane}
+			LocalizedTooltip: This tooltip is from the localization files.
+			LocalizedHeader: Headers can help organize
+		}
+		
+		Currencies: {
+			ExampleCustomCurrency: example items
+		}
+
+		DamageClassName: {
+			ExampleDamageClass: example damage
+		}
+		
+		NPCName: {
+			ExampleCustomAISlimeNPC: Flutter Slime
+			# Here we see that spaces in translation keys are not allowed. Any space will be replaced with an underscore.
+			Example_Person: Example Person
+			ExampleTravellingMerchant: Example Traveler
+		}
+		
+		MapObject: {
+			ExampleClock: Example Clock
+			ExamplePylonTile: "{$Mods.ExampleMod.ItemName.ExamplePylonItem}"
+			ExamplePylonTileAdvanced: "{$Mods.ExampleMod.ItemName.ExamplePylonItemAdvanced}"
+		}
+		
+		ItemTooltip: {
+			# These 2 examples show using substitutions. Here we use a vanilla Key and a key from this Mod to generate the text: "Nearby players get a bonus against: Octopus". 
+			# Note that the translation files for other languages don't need to define ItemTooltip.OctopusBanner, they would only need to define NPCName.Octopus, as seen in zh-Hans.hjson file. 
+			OctopusBanner: "{$CommonItemTooltip.BannerBonus}{$Mods.ExampleMod.NPCName.Octopus}"
+			SarcophagusBanner: "{$CommonItemTooltip.BannerBonus}{$Mods.ExampleMod.NPCName.Sarcophagus}"
+			ExamplePetItem:
+				'''
+				Summons a {$Mods.ExampleMod.Common.PaperAirplane} to follow aimlessly behind you
+				Second Line!
+				'''
+			ExampleBugNet:
+				'''
+				Used to catch critters
+				Has a 20% chance to successfully catch lava critters
+				This increases to 50% if the Warmth Potion buff is active
+				Has a 5% chance to duplicate caught critters
+				'''
+			ExampleSpecificAmmoGun:
+				'''
+				Does not accept cursed bullets as ammunition
+				Fires three rounds in rapid succession
+				Each shot consumes ammunition with a different chance
+				The first shot has a 20% chance to not consume bullets
+				The second shot has a 63% chance to not consume bullets
+				The last shot has a 36% chance to not consume bullets
+				Shots that consume ammunition have their damage boosted by 20%
+				'''
+			ExamplePylonItem: 
+			'''
+			Must be within the Example Surface or Underground Biome in order to function.
+			Has no NPC requirements!
+			'''
+			ExamplePylonItemAdvanced: "Will randomly turn on and off, but otherwise can be teleported to without NPCs and in any biome!"
+		}
+		
+		ItemName: {
+			ExamplePetItem: "{$Mods.ExampleMod.Common.PaperAirplane}"
+			ExampleSpecificAmmoGun: '''Example Rifle'''
+			ExamplePylonItem: "Example Pylon"
+			ExamplePylonItemAdvanced: "Unstable Pylon"
+		}
+		
+		ProjectileName: {
+			ExamplePetProjectile: "{$Mods.ExampleMod.Common.PaperAirplane}"
+		}
+		
+		BuffName: {
+			ExamplePetBuff: "{$Mods.ExampleMod.Common.PaperAirplane}"
+		}
+		
+		BuffDescription: {
+			ExamplePetBuff: '''"Let this pet be an example to you!"'''
+		}
+		
+		RecipeConditions: {
+			Night: At Low Health
+		}
+		
+		Bestiary: {
+			ExamplePerson: Built of blocks with arms of steel. Pumps iron day and night.
+			ExampleBoneMerchant: Built with bone blocks and arms of steel. Throws bones day and night. 
+		}
+		
+		BiomeName: {
+			ExampleSurfaceBiome: Example Surface
+		}
+
+		Prefix: {
+			ExamplePrefix: Example Prefix
+			ExampleDerivedPrefix: Example Derived Prefix
+		}
+		
+		#This is what displays during all of an NPC's happiness levels. Note that the localization key for these should always be "TownNPCMood.*NPCName*.*Mood*" or else it won't display properly.
+		TownNPCMood: {
+			ExamplePerson: {
+				Content: I feel pretty fine right now.
+				NoHome: I would very much like a house, all the colorful monsters scare me.
+				LoveSpace: I love how there is so much space here to code tModLoader mods!
+				FarFromHome: Could you please get me back to my house?
+				DislikeCrowded: There are too many people around, it makes it hard for me to focus on mod making.
+				HateCrowded: I can't test my mod with so many people around!
+				LikeBiome: "{BiomeName} is a very nice place to test mods in."
+				LoveBiome: "I love {BiomeName}."
+				DislikeBiome: "It's way too cold in {BiomeName}, I'm freezing!"
+				HateBiome: "Its kind of hard to mod while being attacked by monsters in {BiomeName}."
+				LikeNPC: "I can respect {NPCName} as a fellow guide and educator!"
+				LoveNPC: "Do you think {NPCName} notices me?"
+				DislikeNPC: '''"{NPCName} keeps rambling on about "payed mods"... Wish I could convince him how terrible of an idea that is."'''
+				HateNPC: "I hate all the loud noises caused by {NPCName} and his explosives! I just want peace and quiet."
+			}
+		}
+
+		MessageInfo: {
+			UnstablePylonIsOff: "That Unstable Pylon is currently inactive."
+			NearbyUnstablePylonIsOff: "The nearby Unstable Pylon is currently inactive."
+		}
+		
+		#This is used to display the NPC's dialogues.
+		Dialogue: {
+			ExamplePerson: {
+				PartyGirlDialogue : "Can you please tell {0} to stop decorating my house with colors?"
+				StandardDialogue1 : "Sometimes I feel like I'm different from everyone else here."
+				StandardDialogue2 : "What's your favorite color? My favorite colors are white and black."
+				StandardDialogue3 : "What? I don't have any arms or legs? Oh, don't be ridiculous!"
+				CommonDialogue : "This message has a weight of 5, meaning it appears 5 times more often."
+				RareDialogue : "This message has a weight of 0.1, meaning it appears 10 times as rare."
+				TalkALot : "I'm getting tired of talking to you. I have to go."
+			}
+			ExampleBoneMerchant: {
+				StandardDialogue1 : "It's relaxing down here in the underground."
+				StandardDialogue2 : "What am I doing down here you may ask? I'm not sure, but leave me be!"
+				StandardDialogue3 : "Huh? What wares do I have? I have no idea! How about you ask?"
+			}
+			ExampleTravelingMerchant: {
+				PartyGirlDialogue : "Can you please tell {0} to stop decorating my cousin's house with colors?"
+				StandardDialogue1 : "Sometimes my cousin feels like they're different from everyone else here."
+				StandardDialogue2 : "What's your favorite color? My cousin's favorite colors are white and black."
+				StandardDialogue3 : "I'm a traveling merchant, and I sell things."
+				HiveBackpackDialogue : "Hey, if you find a [i:HiveBackpack], my cousin can upgrade it for you."
+			}
+		}
+	}
+}
