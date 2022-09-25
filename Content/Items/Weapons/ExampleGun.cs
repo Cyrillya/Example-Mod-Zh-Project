@@ -109,8 +109,9 @@ namespace ExampleMod.Content.Items.Weapons
 			}
 		}*/
 
-		// 发条式突击步枪的效果: 三连发，只消耗一发子弹
-		// 连发之间可以通过 reuseDelay 设置间隔
+		// 发条式突击步枪的效果: 一轮三连发，只消耗一发子弹
+		// 两轮连发之间可以通过 reuseDelay 设置间隔 (即发射一轮后，需经过多少帧才能进行下一轮连发）
+		// 在 https://terraria.wiki.gg/zh/wiki/%E5%8F%91%E6%9D%A1%E5%BC%8F%E7%AA%81%E5%87%BB%E6%AD%A5%E6%9E%AA 有部分介绍
 		// 将下列更改写到 SetDefaults() 中:
 		/*
 			Item.useAnimation = 12;
