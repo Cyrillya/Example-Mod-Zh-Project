@@ -24,15 +24,18 @@
 若该行以[链接](README.md)结束，则不应换行
 
 ### 斜线后加空格
-为了美观，应在双斜线 `//` 后加空格再打注释，如:
+为了美观，应在双斜线 `//` 后**加空格**再打注释，即:
+```diff
++ // 这个是合格的注释样式
+- //这个注释双斜线后没空格，不合格
 ```
-// 这个是合格的注释样式
+
+若直接在代码行末尾添加注释，应**加空格**，即：
+
+```diff
++ Item.DamageType = DamageClass.Ranged; // 伤害类型设置为远程，正确的注释
+- Item.DamageType = DamageClass.Ranged;// 伤害类型设置为远程，错误的注释
 ```
-而不是这样子:
-```
-//这个注释双斜线后没空格，不合格
-```
-这点是要和 ExampleMod 保持一致的
 
 ### 通俗易懂
 首先，机翻肯定是坏文明。
@@ -57,7 +60,7 @@ ExampleMod的翻译不需要完全按着原文来，主要是得能让人看懂�
 - 对于物品、NPC、射弹等支持名称翻译的，`SetDefault` 为英文原文，并使用 `AddTranslation` 添加中文翻译。且第一位 `GameCulture` 参数建议使用 `GameCulture.FromCultureName(GameCulture.CultureName.Chinese)`
 
 ## 这个项目目前的完成度？
-0.01% (悲)  
+0.1% (悲)  
 快来汉化！
 
 ## 原版Example Mod在哪里？
