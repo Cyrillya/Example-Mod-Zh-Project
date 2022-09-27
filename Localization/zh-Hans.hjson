@@ -97,10 +97,12 @@ Mods: {
 		
 		BuffName: {
 			ExamplePetBuff: "{$Mods.ExampleMod.Common.PaperAirplane}"
+			ExampleLifeRegenDebuff: "火焰debuff"
 		}
 		
 		BuffDescription: {
 			ExamplePetBuff: '''"Let this pet be an example to you!"'''
+			ExampleLifeRegenDebuff: "掉血"
 		}
 		
 		RecipeConditions: {

@@ -1,23 +1,28 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+//using Terraria.Localization;
 
 namespace ExampleMod.Content.Buffs
 {
-	// This class serves as an example of a debuff that causes constant loss of life
-	// See ExampleLifeRegenDebuffPlayer.UpdateBadLifeRegen at the end of the file for more information
+	// 这个类作为持续掉血debuff的示例
+	// 更多信息参见本文件末尾的 ExampleLifeRegenDebuffPlayer.UpdateBadLifeRegen
 	public class ExampleLifeRegenDebuff : ModBuff
 	{
 		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Fire debuff"); // Buff display name
-			Description.SetDefault("Losing life"); // Buff description
-			Main.debuff[Type] = true;  // Is it a debuff?
-			Main.pvpBuff[Type] = true; // Players can give other players buffs, which are listed as pvpBuff
-			Main.buffNoSave[Type] = true; // Causes this buff not to persist when exiting and rejoining the world
-			BuffID.Sets.LongerExpertDebuff[Type] = true; // If this buff is a debuff, setting this to true will make this buff last twice as long on players in expert mode
+			DisplayName.SetDefault("Fire debuff"); // Buff显示的名称
+			Description.SetDefault("Losing life"); // Buff描述
+			// 下面的方法可以直接添加一种语言的翻译, 别忘了 using Terraria.Localization
+			// 但是我建议你用.hjson文件进行本地化, 详见 Localization 文件夹中各.hjson文件的 BuffName 与 BuffDescription
+			// DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "火焰debuff?");
+			//Description.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "掉血?");
+			Main.debuff[Type] = true;  // 这是个debuff吗?
+			Main.pvpBuff[Type] = true; // 玩家可以对其他玩家施加被列为 pvpBuff 的 buff
+			Main.buffNoSave[Type] = true; // 使这个buff在退出或重进世界时不持续
+			BuffID.Sets.LongerExpertDebuff[Type] = true; // 如果这个buff是debuff, 那么将此字段设为 true 会使得专家模式下玩家被施加2倍时长的该debuff(大师模式则为2.5倍)
 		}
 
-		// Allows you to make this buff give certain effects to the given player
+		// 允许你让这个buff给特定的玩家特定的效果
 		public override void Update(Player player, ref int buffIndex) {
 			player.GetModPlayer<ExampleLifeRegenDebuffPlayer>().lifeRegenDebuff= true;
 		}
@@ -25,25 +30,25 @@ namespace ExampleMod.Content.Buffs
 
 	public class ExampleLifeRegenDebuffPlayer : ModPlayer
 	{
-		// Flag checking when life regen debuff should be activated
+		// 在生命回复debuff应该被激活时进行标记检查
 		public bool lifeRegenDebuff;
 
 		public override void ResetEffects() {
 			lifeRegenDebuff = false;
 		}
 
-		// Allows you to give the player a negative life regeneration based on its state (for example, the "On Fire!" debuff makes the player take damage-over-time)
-		// This is typically done by setting player.lifeRegen to 0 if it is positive, setting player.lifeRegenTime to 0, and subtracting a number from player.lifeRegen
-		// The player will take damage at a rate of half the number you subtract per second
+		// 允许你基于玩家的状态给玩家负的生命回复(如, "着火了! "debuff令玩家随时间受到伤害)
+		// 这主要由: 若 player.lifeRegen 为正则将其设为0, 再减去一个数字来完成的
+		// 玩家会以每秒你所减去的数字的一半的速率掉血
 		public override void UpdateBadLifeRegen() {
 			if (lifeRegenDebuff) {
-				// These lines zero out any positive lifeRegen. This is expected for all bad life regeneration effects
+				// 这一行将正的生命回复变为0, 所有负生命回复debuff都应该这样做
 				if (Player.lifeRegen > 0)
 					Player.lifeRegen = 0;
-				// Player.lifeRegenTime uses to increase the speed at which the player reaches its maximum natural life regeneration
-				// So we set it to 0, and while this debuff is active, it never reaches it
+				// Player.lifeRegenTime 用来加快玩家自然生命回复到达上限的速度
+				// 所以我们将它设为0, 在这个debuff激活时, 它永远也不会达到上限(是0啊)
 				Player.lifeRegenTime = 0;
-				// lifeRegen is measured in 1/2 life per second. Therefore, this effect causes 8 life lost per second
+				// lifeRegen 以0.5血/秒衡量. 由此, 这个效果导致玩家每秒掉8血
 				Player.lifeRegen -= 16;
 			}
 		}
