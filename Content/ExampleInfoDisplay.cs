@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.Localization;
 
 namespace ExampleMod.Content
 {

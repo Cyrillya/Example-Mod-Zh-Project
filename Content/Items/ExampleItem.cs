@@ -6,6 +6,7 @@ using ExampleMod.Content.Items.Placeable.Furniture;
 using Terraria.Net;
 using Terraria.GameContent.NetModules;
 using Terraria.GameContent.Creative;
+using Terraria.Localization;
 
 namespace ExampleMod.Content.Items
 {
