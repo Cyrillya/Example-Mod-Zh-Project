@@ -3,30 +3,30 @@ using Terraria.ModLoader;
 
 namespace ExampleMod.Content.Prefixes
 {
-	// This class serves as an example for declaring item 'prefixes', or 'modifiers' in other words.
+	// 这个类作为声明物品“前缀”或”修饰词条”的例子
 	public class ExamplePrefix : ModPrefix
 	{
-		// We declare a custom *virtual* property here, so that another type, ExampleDerivedPrefix, could override it and change the effective power for itself.
+		// 声明一个自定义的 *virtual* 属性，所以另一种前缀，ExampleDerivedPrefix，可以重写它自己的Power（效力）
 		public virtual float Power => 1f;
 
-		// Change your category this way, defaults to PrefixCategory.Custom. Affects which items can get this prefix.
+		// 修改该前缀的类别，默认为 PrefixCategory.Custom。影响哪些物品可以获得此前缀
 		public override PrefixCategory Category => PrefixCategory.AnyWeapon;
 
-		// See documentation for vanilla weights and more information.
-		// In case of multiple prefixes with similar functions this can be used with a switch/case to provide different chances for different prefixes
-		// Note: a weight of 0f might still be rolled. See CanRoll to exclude prefixes.
-		// Note: if you use PrefixCategory.Custom, actually use ModItem.ChoosePrefix instead.
+		// 原版前缀的权重和更多信息参见tML文档
+		// 当多个前缀有相似的作用时，可以与 switch 或 case 使用以为不同的前缀提供不同的概率
+		// 注意：即使权重是0f，也有可能被抽到。排除前缀请参见 CanRoll（就在下面）
+		// 注意：如果前缀的类别是 PrefixCategory.Custom，改用 ModItem.ChoosePrefix
 		public override float RollChance(Item item) {
 			return 5f;
 		}
 
-		// Determines if it can roll at all.
-		// Use this to control if a prefix can be rolled or not.
+		// 决定该前缀是否能被抽到
+		// 设为 true 就是能，false 就是不能（废话）
 		public override bool CanRoll(Item item) {
 			return true;
 		}
 
-		// Use this function to modify these stats for items which have this prefix:
+		// 用这个方法来修改拥有此前缀的物品的属性：
 		// Damage Multiplier, Knockback Multiplier, Use Time Multiplier, Scale Multiplier (Size), Shoot Speed Multiplier, Mana Multiplier (Mana cost), Crit Bonus.
 		public override void SetStats(ref float damageMult, ref float knockbackMult, ref float useTimeMult, ref float scaleMult, ref float shootSpeedMult, ref float manaMult, ref int critBonus) {
 			damageMult *= 1f + 0.20f * Power;
