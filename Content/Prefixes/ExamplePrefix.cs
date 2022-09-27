@@ -27,19 +27,19 @@ namespace ExampleMod.Content.Prefixes
 		}
 
 		// 用这个方法来修改拥有此前缀的物品的属性：
-		// Damage Multiplier, Knockback Multiplier, Use Time Multiplier, Scale Multiplier (Size), Shoot Speed Multiplier, Mana Multiplier (Mana cost), Crit Bonus.
+		// damageMult 伤害乘数，knockbackMult 击退乘数，useTimeMult 使用时间乘数，scaleMult 大小乘数，shootSpeedMult 弹速（射速，射出的速度）乘数，manaMult 魔力消耗乘数，critBonus 暴击增量
 		public override void SetStats(ref float damageMult, ref float knockbackMult, ref float useTimeMult, ref float scaleMult, ref float shootSpeedMult, ref float manaMult, ref int critBonus) {
 			damageMult *= 1f + 0.20f * Power;
 		}
 
-		// Modify the cost of items with this modifier with this function.
+		// 修改获得此前缀的物品的价格，valueMult 为价格乘数
 		public override void ModifyValue(ref float valueMult) {
 			valueMult *= 1f + 0.05f * Power;
 		}
 
-		// This is used to modify most other stats of items which have this modifier.
+		// 这个方法用来修改获得此前缀的物品的其它属性
 		public override void Apply(Item item) {
-			//
+			// 开始你的表演
 		}
 	}
 }
