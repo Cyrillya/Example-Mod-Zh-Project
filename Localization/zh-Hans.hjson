@@ -1,10 +1,12 @@
-﻿# 你可能会发现用这个.hjson来翻译你的mod更容易些
-# .hjson文件包含由文件名指定的语言的翻译。（确保这个文件是以UTF-8编码保存的）
-# 语言可以有：英语（“en-US”），德语（“de-DE”），意大利语（“it-IT”），法语（“fr-FR”），西班牙语（“es-ES”），俄语（“ru-RU”），汉语（“zh-Hans”），葡萄牙语（“pt-BR”），和波兰语（“pl-PL”）
+﻿# en-US.hjson，zh-Hans.hjson这类.hjson文件会使得Mod翻译工作更加简便
+# .hjson文件包含由文件名指定的语言的翻译。（确保这个文件是以UTF-8编码保存的，否则非英文文本可能显示为乱码）
+# 语言可以有：英语（“en-US”），德语（“de-DE”），意大利语（“it-IT”），法语（“fr-FR”），西班牙语（“es-ES”）
+# 俄语（“ru-RU”），汉语（“zh-Hans”），葡萄牙语（“pt-BR”），和波兰语（“pl-PL”）
 # ExampleMod中我们在一个叫做 Localization 的文件夹里组织好了这些文件。每种语言一个文件使得整合并维护翻译变得极其容易
-# 每一个.hjson里的翻译条目包含一个键（key）和一个值（value）。这些键由以下JSON规则决定 [https://www.w3schools.com/js/js_json_syntax.asp]
+# 每一个.hjson里的翻译条目包含一个键（Key）和一个值（Value）。这些键由以下JSON规则决定 [https://www.w3schools.com/js/js_json_syntax.asp]
 # 键自动继承 “Mods.模组名称”，如果你想代入（如 Paper Airplane 中的一样），使用 Language.GetTextValue 或 Network text，这会很有用
-# 以下是目前自动生成的键：ItemName（物品名称），ItemTooltip（物品描述），BuffName（状态效果名称），BuffDescription（状态效果描述），ProjectileName（射弹名称），NPCName（NPC名称），MapObject（地图物件），和 Prefix（前缀）
+# 以下是目前自动生成的键：ItemName（物品名称），ItemTooltip（物品描述），BuffName（状态效果名称），BuffDescription（状态效果描述），
+# ProjectileName（射弹名称），NPCName（NPC名称），MapObject（地图物件），和 Prefix（前缀）
 
 Mods: {
 	ExampleMod: {
@@ -123,10 +125,10 @@ Mods: {
 			ExampleDerivedPrefix: Example Derived Prefix
 		}
 		
-		#This is what displays during all of an NPC's happiness levels. Note that the localization key for these should always be "TownNPCMood.*NPCName*.*Mood*" or else it won't display properly.
+		# 这是NPC的幸福度提示文本。请注意，这些文本的键(Key)应该始终是 "TownNPCMood.*NPC名称*.*心情*"，否则将无法正确显示。
 		TownNPCMood: {
 			ExamplePerson: {
-				Content: I feel pretty fine right now.
+				Content: 我现在自我感觉良好。
 				NoHome: I would very much like a house, all the colorful monsters scare me.
 				LoveSpace: I love how there is so much space here to code tModLoader mods!
 				FarFromHome: Could you please get me back to my house?
@@ -148,7 +150,7 @@ Mods: {
 			NearbyUnstablePylonIsOff: "The nearby Unstable Pylon is currently inactive."
 		}
 		
-		#This is used to display the NPC's dialogues.
+		# 以下文本被用于NPC对话
 		Dialogue: {
 			ExamplePerson: {
 				PartyGirlDialogue : "Can you please tell {0} to stop decorating my house with colors?"
@@ -171,6 +173,13 @@ Mods: {
 				StandardDialogue3 : "I'm a traveling merchant, and I sell things."
 				HiveBackpackDialogue : "Hey, if you find a [i:HiveBackpack], my cousin can upgrade it for you."
 			}
+		}
+
+		GameTips: {
+			ExampleTip0: "来点例子提示！"
+			ExampleTip1: "这是一个由Example Mod添加的提示！"
+			ExampleTip2: "这是另一个由Example Mod添加的提示！"
+			DisabledExampleTip: "这条提示确实被加进了游戏，但是被Example Mod关闭了，你不会在游戏中看到这条提示。"
 		}
 	}
 }
