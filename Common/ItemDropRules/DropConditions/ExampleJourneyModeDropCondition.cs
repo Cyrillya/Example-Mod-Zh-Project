@@ -3,7 +3,7 @@ using Terraria.GameContent.ItemDropRules;
 
 namespace ExampleMod.Common.ItemDropRules.DropConditions
 {
-	// Drop condition where items drop only on Journey mode.
+	// 仅在旅行模式掉落的条件
 	public class ExampleJourneyModeDropCondition : IItemDropRuleCondition
 	{
 		public bool CanDrop(DropAttemptInfo info) {
@@ -18,7 +18,7 @@ namespace ExampleMod.Common.ItemDropRules.DropConditions
 		}
 
 		public string GetConditionDescription() {
-			return "Drops only on Journey Mode";
+			return "仅在旅行模式下掉落";
 		}
 	}
 }

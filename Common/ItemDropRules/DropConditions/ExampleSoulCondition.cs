@@ -9,8 +9,9 @@ namespace ExampleMod.Common.ItemDropRules.DropConditions
 	{
 		public bool CanDrop(DropAttemptInfo info) {
 			if (!info.IsInSimulation) {
-				// Can drop if it's not hardmode, and not a critter or an irrelevant enemy, and player is in the ExampleUndergroundBiome
-				// Disclaimer: This is adapted from Conditions.SoulOfWhateverConditionCanDrop(info) to remove the cavern layer restriction, because ExampleUndergroundBiome also extends into the dirt layer
+				// 如果是困难模式，不是小动物或无关紧要的敌人，并且玩家处于ExampleUndergroundBiome中，就可以掉落。（对于敌人的判断和原版是一致的）
+				// 这是从原版的 Conditions.SoulOfWhateverConditionCanDrop(info) 方法修改而来的
+				// 去掉了对洞穴层的限制，因为ExampleUndergroundBiome也延伸到了泥土层。
 
 				NPC npc = info.npc;
 				if (npc.boss || NPCID.Sets.CannotDropSouls[npc.type]) {
@@ -31,7 +32,7 @@ namespace ExampleMod.Common.ItemDropRules.DropConditions
 		}
 
 		public string GetConditionDescription() {
-			return "Drops in 'Example Underground Biome' in hardmode";
+			return "在困难模式中的Example Underground Biome掉落";
 		}
 	}
 }
