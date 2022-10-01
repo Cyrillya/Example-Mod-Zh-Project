@@ -18,7 +18,7 @@ namespace ExampleMod.Common.ItemDropRules.DropConditions
 		}
 
 		public string GetConditionDescription() {
-			return "Drops only on Journey Mode";
+			return "仅在旅行模式下掉落";
 		}
 	}
 }

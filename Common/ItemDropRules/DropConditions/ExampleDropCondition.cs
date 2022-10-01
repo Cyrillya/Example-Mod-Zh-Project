@@ -18,7 +18,7 @@ namespace ExampleMod.Common.ItemDropRules.DropConditions
 		}
 
 		public string GetConditionDescription() {
-			return "Drops during daytime";
+			return "白天掉落";
 		}
 	}
 }
