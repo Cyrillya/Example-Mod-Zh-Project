@@ -59,8 +59,11 @@ ExampleMod的翻译不需要完全按着原文来，主要是得能让人看懂�
 - 原版物品、NPC、射弹名称等一律使用中文Wiki上的翻译
 - 对于物品、NPC、射弹等支持名称翻译的，`SetDefault` 为英文原文，并使用 `AddTranslation` 添加中文翻译。且第一位 `GameCulture` 参数建议使用 `GameCulture.FromCultureName(GameCulture.CultureName.Chinese)`
 
+## 能塞“私货”吗？
+是可以的，只需在Github上提交一个**Pull Request**即可，但要记得写好注释。此外，还有一些与tModLoader官方一致的[**格式要求**](https://github.com/tModLoader/tModLoader/wiki/tModLoader-Style-Guide)需要遵守
+
 ## 这个项目目前的完成度？
-0.1% (悲)  
+1% (悲)  
 快来汉化！
 
 ## 原版Example Mod在哪里？
