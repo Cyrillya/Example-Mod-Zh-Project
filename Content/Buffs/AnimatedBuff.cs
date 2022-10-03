@@ -8,23 +8,24 @@ using Terraria.ModLoader;
 
 namespace ExampleMod.Content.Buffs
 {
-	// This buff has an extra animation spritesheet, and also showcases PreDraw specifically.
-	// (We keep the autoloaded texture as one frame in case other mods need to access the buff sprite directly and aren't aware of it having special draw code).
+	// 这个buff有额外的动画帧图, 同时也专门展示了PreDraw
+	// (我们将自动加载的材质作为其中一帧, 以免有模组需要获取这个buff的材质而错过了)
 	public class AnimatedBuff : ModBuff
 	{
-		// Some constants we define to make our life easier.
-		public const int FrameCount = 4; // Amount of frames we have on our animation spritesheet.
-		public const int AnimationSpeed = 60; // In ticks.
-		public const string AnimationSheetPath = "ExampleMod/Content/Buffs/AnimatedBuff_Animation";
+		// 设置一些简化操作的常量
+		public const int FrameCount = 4; // 我们帧图的帧数
+		public const int AnimationSpeed = 60; // 每一段帧图持续多久, 单位为帧
+		public const string AnimationSheetPath = "ExampleMod/Content/Buffs/AnimatedBuff_Animation"; // 这是此buff的帧图路径
 
 		private Asset<Texture2D> animatedTexture;
 
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Animated Buff");
 			Description.SetDefault("Animates and increases all damage by 10%.");
+			// 中文本地化见 zh-Hans.hjson
 
 			if (Main.netMode != NetmodeID.Server) {
-				// Do NOT load textures on the server!
+				// 不! 要! 在服务器上加载材质!
 				animatedTexture = ModContent.Request<Texture2D>(AnimationSheetPath);
 			}
 		}
@@ -34,48 +35,50 @@ namespace ExampleMod.Content.Buffs
 		}
 
 		public override bool PreDraw(SpriteBatch spriteBatch, int buffIndex, ref BuffDrawParams drawParams) {
-			// You can use this hook to make something special happen when the buff icon is drawn (such as reposition it, pick a different texture, etc.).
+			// 你可以调用此钩子来让一些特别的事情在buff图标绘制时发生 (比如画在别的地方, 使用不同的材质等等)
 
-			// We draw our special texture here with a specific animation.
+			// 我们绘制自己的帧图 (AnimatedBuff_Animation.png) 而不是自动加载的图标 (AnimatedBuff.png)
 
-			// Use our animation spritesheet.
+			// 用自己的帧图
 			Texture2D ourTexture = animatedTexture.Value;
-			// Choose the frame to display, here based on constants and the game's tick count.
+			// 选择要绘制的那一帧, 这里取决于先前设置好的常量和游戏帧数
 			Rectangle ourSourceRectangle = ourTexture.Frame(verticalFrames: FrameCount, frameY: (int)Main.GameUpdateCount / AnimationSpeed % FrameCount);
 
-			// Other stuff you can do in this hook
+			// 你还能再这个钩子里做别的事情
 			/*
-			// Here we make the icon have a lime green tint.
+			// 这里让图标染上橙绿色
 			drawParams.drawColor = Color.LimeGreen * Main.buffAlpha[buffIndex];
 			*/
 
-			// Be aware of the fact that drawParams.mouseRectangle exists: it defaults to the size of the autoloaded buffs' sprite,
-			// it handles mouseovering and clicking on the buff icon. Since our frame in the animation is 32x32 (same as the autoloaded sprite),
-			// and we don't change drawParams.position, we don't have to do anything. If you offset the position, or have a non-standard size, change it accordingly.
+			// 注意 drawParams.mouseRectangle 仍在: 它默认是buff图标的大小
+			// 它处理鼠标悬停与点击buff图标. 既然我们的每一帧也是32x32 (与自动加载的图标大小相同),
+			// 我们也不修改绘制的位置 drawParams.position, 就不对此进行修改了. 如果你修改了位置或使用了非标准大小, 记得改这个
 
 			// We have two options here:
-			// Option 1 is the recommended one, as it requires less code.
-			// Option 2 allows you to customize drawing even more, but then you are on your own.
+			// 我们有两个选择:
+			// 一是比较推荐的, 需要的码更少
+			// 第二种更自由, 但是你得自己写了
 
 			// For demonstration, both options' codes are written down, but the latter is commented out using /* and */.
+			// 出于演示目的, 这里写了两种方法, 后者被 /* 和 */ 注释掉了
 
-			// OPTION 1 - Let the game draw it for us. Therefore we have to assign our variables to drawParams:
+			// 选择1 - 让游戏帮我们画好, 因此我们需要确定好 drawParams 的变量:
 			drawParams.Texture = ourTexture;
 			drawParams.SourceRectangle = ourSourceRectangle;
-			// Return true to let the game draw the buff icon.
+			// 返回 true 让游戏把图标画出来
 			return true;
 
 			/*
-			// OPTION 2 - Draw our buff manually:
+			// 选择2 - 手动绘制图标:
 			spriteBatch.Draw(ourTexture, drawParams.position, ourSourceRectangle, drawParams.drawColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
-			// Return false to prevent drawing the icon, since we have already drawn it.
+			// 返回 false 以阻止游戏自身的绘制, 因为我们已经手动画过了
 			return false;
 			*/
 		}
 
 		public override void Update(Player player, ref int buffIndex) {
-			// Increase all damage by 10%
+			// 所有伤害+10%
 			player.GetDamage<GenericDamageClass>() += 0.1f;
 		}
 	}
