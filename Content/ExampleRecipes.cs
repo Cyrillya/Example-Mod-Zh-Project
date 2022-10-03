@@ -18,6 +18,7 @@ namespace ExampleMod.Content
 			ExampleRecipeGroup = null;
 		}
 
+		// 附: 中文Wiki材料组页面: https://terraria.wiki.gg/zh/wiki/%E5%8F%AF%E9%80%89%E6%8B%A9%E5%88%B6%E4%BD%9C%E6%9D%90%E6%96%99 
 		public override void AddRecipeGroups() {
 			// 创建一个材料组并存在ExampleRecipeGroup里
 			// 材料组: 原版的“任何铁锭”就是一个材料组，而只要铁锭和铅锭总和 ≥3 就可以合成空桶
