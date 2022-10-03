@@ -9,14 +9,14 @@ using ExampleMod.Content.NPCs.MinionBoss;
 
 namespace ExampleMod.Content.BossBars
 {
-	// Showcases a custom boss bar with basic logic for displaying the icon, life, and shields properly.
-	// Has no custom texture, meaning it will use the default vanilla boss bar texture
+	// 有显示图标, 生命与护盾的基本逻辑的血条
+	// 该例没有使用自定义材质, 用的是原版的
 	public class MinionBossBossBar : ModBossBar
 	{
 		private int bossHeadIndex = -1;
 
 		public override Asset<Texture2D> GetIconTexture(ref Rectangle? iconFrame) {
-			// Display the previously assigned head index
+			// 显示先前指定好的图标
 			if (bossHeadIndex != -1) {
 				return TextureAssets.NpcHeadBoss[bossHeadIndex];
 			}
@@ -24,20 +24,20 @@ namespace ExampleMod.Content.BossBars
 		}
 
 		public override bool? ModifyInfo(ref BigProgressBarInfo info, ref float lifePercent, ref float shieldPercent) {
-			// Here the game wants to know if to draw the boss bar or not. Return false whenever the conditions don't apply.
-			// If there is no possibility of returning false (or null) the bar will get drawn at times when it shouldn't, so write defensive code!
+			// 游戏在这里判断是否绘制boss血条. 当条件不允许时返回false
+			// 如果不可能返回false或null, 那血条就会在不该绘制的时候绘制, 所以码要写得保守一点
 
 			NPC npc = Main.npc[info.npcIndexToAimAt];
 			if (!npc.active)
 				return false;
 
-			// We assign bossHeadIndex here because we need to use it in GetIconTexture
+			// 在这里指定 bossHeadIndex, 因为 GetIconTexture 要用
 			bossHeadIndex = npc.GetBossHeadTextureIndex();
 
 			lifePercent = Utils.Clamp(npc.life / (float)npc.lifeMax, 0f, 1f);
 
 			if (npc.ModNPC is MinionBossBody body) {
-				// We did all the calculation work on RemainingShields inside the body NPC already so we just have to fetch the value again
+				// 我们在主体NPC的 RemainingShields 里已经计算好了护盾值, 所以这里把值取出来就好
 				shieldPercent = Utils.Clamp(body.RemainingShields, 0f, 1f);
 			}
 
