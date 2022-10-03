@@ -12,6 +12,7 @@ namespace ExampleMod.Content.Buffs
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Blocky");
 			Description.SetDefault("Jumping power is increased");
+			// 中文本地化见 zh-Hans.hjson
 			Main.debuff[Type] = true;
 			Main.buffNoSave[Type] = true;
 			Main.buffNoTimeDisplay[Type] = true;
@@ -21,7 +22,7 @@ namespace ExampleMod.Content.Buffs
 		public override void Update(Player player, ref int buffIndex) {
 			ExampleCostumePlayer p = player.GetModPlayer<ExampleCostumePlayer>();
 
-			// We use blockyAccessoryPrevious here instead of blockyAccessory because UpdateBuffs happens before UpdateEquips but after ResetEffects.
+			// 由于 UpdateBuffs 在 UpdateEquips 前但是在 ResetEffects 后执行, 这里用 blockyAccessoryPrevious  而不是 blockyAccessory 
 			if (player.townNPCs >= 1 && p.BlockyAccessoryPrevious) {
 				p.BlockyPower = true;
 
@@ -32,17 +33,19 @@ namespace ExampleMod.Content.Buffs
 				player.jumpSpeedBoost += 4.8f;
 				player.extraFall += 45;
 
-				// Some other effects:
+				// 其他一些效果:
 				//player.lifeRegen++;
-				//player.meleeCrit += 2;
-				//player.meleeDamage += 0.051f;
-				//player.meleeSpeed += 0.051f;
+				//player.GetCritChance(DamageClass.Melee) += 2;
+				//player.GetDamage(DamageClass.Melee) += 0.051f;
+				//player.GetAttackSpeed(DamageClass.Melee) += 0.051f;
 				//player.statDefense += 3;
 				//player.moveSpeed += 0.05f;
 			}
 			else {
 				player.DelBuff(buffIndex);
 				buffIndex--;
+				// 其实下面这个写法用来清除buff更好:
+				//player.buffTime[buffIndex] = 0; // 下一帧buff自然消失
 			}
 		}
 	}

@@ -98,11 +98,21 @@ Mods: {
 		BuffName: {
 			ExamplePetBuff: "{$Mods.ExampleMod.Common.PaperAirplane}"
 			ExampleLifeRegenDebuff: "火焰debuff"
+			AnimatedBuff : "有动态图表的buff"
+			Blocky : "结块"
+			ExampleCrateBuff : "示例宝匣buff
+			ExampleDefenseBuff : "示例防御buff"
+			ExampleMountBuff : "示例坐骑buff"
 		}
 		
 		BuffDescription: {
 			ExamplePetBuff: '''"Let this pet be an example to you!"'''
 			ExampleLifeRegenDebuff: "掉血"
+			AnimatedBuff : "图标会动并使所有伤害+10%"
+			Blocky : "跳跃能力增强"
+			ExampleCrateBuff : "有更高的概率钓上宝匣"
+			ExampleDefenseBuff : "防御+4"
+			ExampleMountBuff : "皮革座位, 四个杯座"
 		}
 		
 		RecipeConditions: {

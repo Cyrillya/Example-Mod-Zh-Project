@@ -8,10 +8,11 @@ namespace ExampleMod.Content.Buffs
 		public override void SetStaticDefaults() {
 			DisplayName.SetDefault("Defensive Buff");
 			Description.SetDefault("Grants +4 defense.");
+			// 中文本地化见 zh-Hans.hjson
 		}
 
 		public override void Update(Player player, ref int buffIndex) {
-			player.statDefense += 4; // Grant a +4 defense boost to the player while the buff is active.
+			player.statDefense += 4; // 此buff激活时使玩家的防御+4
 		}
 	}
 }

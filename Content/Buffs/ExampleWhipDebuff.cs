@@ -7,9 +7,11 @@ namespace ExampleMod.Content.Buffs
 	public class ExampleWhipDebuff : ModBuff
 	{
 		public override void SetStaticDefaults() {
-			// This allows the debuff to be inflicted on NPCs that would otherwise be immune to all debuffs.
-			// Other mods may check it for different purposes.
+			// 使得此debuff能被施加在免疫所有debuff的NPC身上 (免疫鞭子标记是单独的一个)
+			// 其它模组可能会检测这个
 			BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
+			// 此buff不会被施加在玩家身上, 所以没有名字或描述
+			// 如果你要搞点骚操作, 记得写上
 		}
 
 		public override void Update(NPC npc, ref int buffIndex) {
@@ -19,7 +21,7 @@ namespace ExampleMod.Content.Buffs
 
 	public class ExampleWhipDebuffNPC : GlobalNPC
 	{
-		// This is required to store information on entities that isn't shared between them.
+		// 使得每个实体 (此处是NPC) 有自己的属性, 不然一个NPC被标记所有的NPC都会被标记
 		public override bool InstancePerEntity => true;
 
 		public bool markedByExampleWhip;
@@ -28,9 +30,9 @@ namespace ExampleMod.Content.Buffs
 			markedByExampleWhip = false;
 		}
 
-		// TODO: Inconsistent with vanilla, increasing damage AFTER it is randomised, not before. Change to a different hook in the future.
+		// 原版的鞭子标记增伤是在伤害随机浮动之后, 但是tML还没有那个钩子, 所以先用下面这个伤害浮动之前的方法
 		public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection) {
-			// Only player attacks should benefit from this buff, hence the NPC and trap checks.
+			// 只有玩家的攻击从中获益, 所以要检测射弹是不是NPC或陷阱的
 			if (markedByExampleWhip && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type])) {
 				damage += 5;
 			}
