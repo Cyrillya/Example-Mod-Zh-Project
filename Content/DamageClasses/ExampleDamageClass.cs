@@ -7,32 +7,32 @@ namespace ExampleMod.Content.DamageClasses
 {
 	public class ExampleDamageClass : DamageClass
 	{
-		// This is an example damage class designed to demonstrate all the current functionality of the feature and explain how to create one of your own, should you need one.
-		// For information about how to apply stat bonuses to specific damage classes, please instead refer to ExampleMod/Content/Items/Accessories/ExampleStatBonusAccessory.
+		// 此示例伤害类型被设计用于展示 DamageClass 的现有功能并教你如何自己写一个
+		// 至于如何对特定的伤害类型应用加成, 参见 ExampleMod/Content/Items/Accessories/ExampleStatBonusAccessory
 		public override StatInheritanceData GetModifierInheritance(DamageClass damageClass) {
-			// This method lets you make your damage class benefit from other classes' stat bonuses by default, as well as universal stat bonuses.
-			// To briefly summarize the two nonstandard damage class names used by DamageClass:
-			// Default is, you guessed it, the default damage class. It doesn't scale off of any class-specific stat bonuses or universal stat bonuses.
-			// There are a number of items and projectiles that use this, such as thrown waters and the Bone Glove's bones.
-			// Generic, on the other hand, scales off of all universal stat bonuses and nothing else; it's the base damage class upon which all others that aren't Default are built.
+			// 此方法让你的伤害类型能够享受其它伤害类型的加成, 也包括通用伤害类型
+			// 简要总结一下伤害类型使用的两种非标准名称:
+			// Default (默认), 是的你已经猜到了, 就是默认的伤害类型. 它不会受到任何特定伤害类型或通用伤害类型加成的影响
+			// 有相当一部分原版物品和射弹用的是这个伤害类型, 如投掷水瓶和骨头手套的十字骨
+			// Geberic (通用), 与之相反, 受所有伤害类型的加成影响. 这是除了 Default 以外所有伤害类型的基础
 			if (damageClass == DamageClass.Generic)
 				return StatInheritanceData.Full;
 
 			return new StatInheritanceData(
-				damageInheritance: 0f,
-				critChanceInheritance: 0f,
-				attackSpeedInheritance: 0f,
-				armorPenInheritance: 0f,
-				knockbackInheritance: 0f
+				damageInheritance: 0f, // 伤害继承
+				critChanceInheritance: 0f, // 暴击率继承
+				attackSpeedInheritance: 0f, // 攻速继承
+				armorPenInheritance: 0f, // 盔甲穿透继承
+				knockbackInheritance: 0f // 击退继承
 			);
-			// Now, what exactly did we just do, you might ask? Well, let's see here...
-			// StatInheritanceData is a struct which you'll need to return one of for any given outcome this method.
-			// Normally, the latter of these two would be written as "StatInheritanceData.None", rather than being typed out by hand...
-			// ...but for the sake of clarity, we've written it out and labeled each parameter in order; they should be self-explanatory.
-			// To explain how these return values work, each one behaves like a percentage, with 0f being 0%, 1f being 100%, and so on.
-			// The return value indicates how much your class will scale off of the stat in question for whatever damage class(es) you've returned it for.
-			// If you create a StatInheritanceData without any parameters, all of them will be set to 1f.
-			// For example, if we propose a hypothetical alternate return for DamageClass.Ranged...
+			// 现在, 你可能会问: "上面那些代码是什么意思?". 让我们来看看:
+			// StatInheritanceData 是一个你需要返回的结构体
+			// 一般的, 上面两个 StatInheritanceData 的后者应当被写为 "StatInheritanceData.None" 而不是将变量一个一个写出来...
+			// ...但为了讲得清楚一点, 这里我们把每一个变量都写出来并赋值; 它们的作用应当是一目了然的
+			// 每个返回值是加成所继承的百分比, 0f是0%, 1f即为100%, 以此类推
+			// 这个百分比决定了你的伤害类型受指定的加成类型多少影响
+			// 如果你创建了一个 StatInheritanceData 而不给变量赋值, 所有的变量将会被设为1f
+			// 举个例子, 假设我们为 DamageClass.Ranged 返回一个不同的 StatInheritanceData...
 			/*
 			if (damageClass == DamageClass.Ranged)
 				return new StatInheritanceData(
@@ -43,21 +43,22 @@ namespace ExampleMod.Content.DamageClasses
 					knockbackInheritance: 0f
 				);
 			*/
-			// This would allow our custom class to benefit from the following ranged stat bonuses:
-			// - Damage, at 100% effectiveness
-			// - Attack speed, at 40% effectiveness
-			// - Crit chance, at -100% effectiveness (this means anything that raises ranged crit chance specifically will lower the crit chance of our custom class by the same amount)
-			// - Armor penetration, at 250% effectiveness
+			// 则远程伤害加成会对此伤害类型产生以下效果:
+			// 伤害, 受100%加成
+			// 攻速, 受40%加成
+			// 暴击率, 受-100%加成 (也就是说远程暴击的加成反而会等量地减少此伤害的暴击率)
+			// 盔甲穿透, 受250%加成
 
-			// CAUTION: There is no hardcap on what you can set these to. Please be aware and advised that whatever you set them to may have unintended consequences,
-			// and that we are NOT responsible for any temporary or permanent damage caused to you, your character, or your world as a result of your morbid curiosity.
-			// To refer to a non-vanilla damage class for these sorts of things, use "ModContent.GetInstance<TargetDamageClassHere>()" instead of "DamageClass.XYZ".
+			// 警 告: 这些数值没有内置的上下限. 你所设置的数值 (比如非常大或非常小的数值) 有可能导致意外后果
+			// 由于你病态的好奇心, 而对你, 你的角色或你的世界造成的, 任何临时或永久性的伤害, 我们不负责任
+
+			// 要使用非原版的伤害类型, 请用 "ModContent.GetInstance<伤害类型>()" 来替代 "DamageClass.伤害类型"
 		}
 
 		public override bool GetEffectInheritance(DamageClass damageClass) {
-			// This method allows you to make your damage class benefit from and be able to activate other classes' effects (e.g. Spectre bolts, Magma Stone) based on what returns true.
-			// Note that unlike our stat inheritance methods up above, you do not need to account for universal bonuses in this method.
-			// For this example, we'll make our class able to activate melee- and magic-specifically effects.
+			// 此方法允许你使你的伤害类型触发本该由其它伤害类型触发的效果 (如岩浆石只对近战伤害生效)
+			// 不像上面的属性继承, 你不需要在此方法里写通用加成
+			// 举个例子, 下面我们使此伤害类型能够触发近战和魔法伤害的效果
 			if (damageClass == DamageClass.Melee)
 				return true;
 			if (damageClass == DamageClass.Magic)
@@ -67,28 +68,27 @@ namespace ExampleMod.Content.DamageClasses
 		}
 
 		public override void SetDefaultStats(Player player) {
-			// This method lets you set default statistical modifiers for your example damage class.
-			// Here, we'll make our example damage class have more critical strike chance and armor penetration than normal.
+			// 此方法让你设置此伤害类型的默认属性加成 (像原版的伤害默认有+4%暴击率)
+			// 此处我们使其默认拥有+4%暴击率和+10盔甲穿透
 			player.GetCritChance<ExampleDamageClass>() += 4;
 			player.GetArmorPenetration<ExampleDamageClass>() += 10;
-			// These sorts of modifiers also exist for damage (GetDamage), knockback (GetKnockback), and attack speed (GetAttackSpeed).
-			// You'll see these used all around in referencce to vanilla classes and our example class here. Familiarize yourself with them.
+			// 你也可以在这里写伤害 (GetDamage), 击退 (GetKnockback), 和攻速 (GetAttackSpeed)
 		}
 
-		// This property lets you decide whether or not your damage class can use standard critical strike calculations.
-		// Note that setting it to false will also prevent the critical strike chance tooltip line from being shown.
-		// This prevention will overrule anything set by ShowStatTooltipLine, so be careful!
+		// 此属性决定此伤害类型是否使用标准的暴击计算公式
+		// 请注意将其设为 false 会阻止描述中 "暴击率" 一行的显示
+		// 并且即使你在 ShowStatTooltipLine 返回 true 也不行, 所以要小心!
 		public override bool UseStandardCritCalcs => true;
 
 		public override bool ShowStatTooltipLine(Player player, string lineName) {
-			// This method lets you prevent certain common statistical tooltip lines from appearing on items associated with this DamageClass.
-			// The four line names you can use are "Damage", "CritChance", "Speed", and "Knockback". All four cases default to true, and thus will be shown. For example...
+			// 此方法允许你隐藏物品描述中特定伤害类型的数据显示
+			// 四个可用的名称是 "Damage", "CritChance", "Speed", 和 "Knockback"
+			// 这四行描述默认返回 true, 因此会显示出来 (废话), 但如果我们...
 			if (lineName == "Speed")
 				return false;
 
 			return true;
-			// PLEASE BE AWARE that this hook will NOT be here forever; only until an upcoming revamp to tooltips as a whole comes around.
-			// Once this happens, a better, more versatile explanation of how to pull this off will be showcased, and this hook will be removed.
+			// 注 意: 这个钩子将来会被移除, 并以一个更好的替代
 		}
 	}
 }
