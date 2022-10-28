@@ -2,7 +2,7 @@ using ExampleMod.Common.Configs;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent.Creative;
+// using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -19,7 +19,8 @@ namespace ExampleMod.Content.Items.Accessories
 		public override void SetStaticDefaults() {
 			Tooltip.SetDefault("这是一双模组翅膀");
 
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+			// CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+			SacrificeTotal = 1; // 上一行与这一行的效果是一样的, 旅途研究所需数量, 只是下面这个更简洁, 还不需要 using Terraria.GameContent.Creative;
 
 			// 翅膀的各项参数, 下列参数与日耀翅膀相同
 			// 飞行时间: 180 帧 = 3 秒 (实际上并不是, 但你这么算没问题的)

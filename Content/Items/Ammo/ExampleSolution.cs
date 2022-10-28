@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
-using Terraria.GameContent.Creative;
+// using Terraria.GameContent.Creative;
 using Terraria.ModLoader;
 
 namespace ExampleMod.Content.Items.Ammo
@@ -16,10 +16,11 @@ namespace ExampleMod.Content.Items.Ammo
 		public override string Texture => ExampleMod.AssetPath + "Textures/Items/ExampleSolution";
 
 		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Monochromatic Solution");
-			Tooltip.SetDefault("Used by the Clentaminator\nSpreads the example");
+			DisplayName.SetDefault("单色溶液");
+			Tooltip.SetDefault("用于环境改造枪\n散播示例");
 
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 99;
+			// CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 99;
+			SacrificeTotal = 99; // 上一行与这一行的效果是一样的, 旅途研究所需数量, 只是下面这个更简洁, 还不需要 using Terraria.GameContent.Creative;
 		}
 
 		public override void SetDefaults() {
@@ -33,7 +34,7 @@ namespace ExampleMod.Content.Items.Ammo
 			Item.consumable = true;
 		}
 
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		// 合成配方的创建详见 Content/ExampleRecipes.cs
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<ExampleItem>()
@@ -49,7 +50,7 @@ namespace ExampleMod.Content.Items.Ammo
 		public ref float Progress => ref Projectile.ai[0];
 
 		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Example Spray");
+			DisplayName.SetDefault("示例喷剂");
 		}
 
 		public override void SetDefaults() {
@@ -64,7 +65,7 @@ namespace ExampleMod.Content.Items.Ammo
 		}
 
 		public override void AI() {
-			// Set the dust type to ExampleSolution
+			// 将粒子类型设为 ExampleSolution
 			int dustType = ModContent.DustType<Dusts.ExampleSolution>();
 
 			if (Projectile.owner == Main.myPlayer) {
@@ -116,33 +117,33 @@ namespace ExampleMod.Content.Items.Ammo
 						int type = Main.tile[k, l].TileType;
 						int wall = Main.tile[k, l].WallType;
 
-						// Convert all walls to ExampleWall
+						// 将所有墙转化为 ExampleWall
 						if (wall != 0) {
 							Main.tile[k, l].WallType = (ushort)ModContent.WallType<ExampleWall>();
 							WorldGen.SquareWallFrame(k, l);
 							NetMessage.SendTileSquare(-1, k, l, 1);
 						}
 
-						// If the tile is stone, convert to ExampleBlock
+						// 将石头转化为 ExampleBlock
 						if (TileID.Sets.Conversion.Stone[type]) {
 							Main.tile[k, l].TileType = (ushort)ModContent.TileType<ExampleBlock>();
 							WorldGen.SquareTileFrame(k, l);
 							NetMessage.SendTileSquare(-1, k, l, 1);
 						}
-						// If the tile is sand, convert to ExampleSand
+						// 将沙子转化为 ExampleSand
 						// else if (TileID.Sets.Conversion.Sand[type]) {
 						// 	Main.tile[k, l].type = (ushort)TileType<ExampleSand>();
 						// 	WorldGen.SquareTileFrame(k, l);
 						// 	NetMessage.SendTileSquare(-1, k, l, 1);
 						// }
-						// If the tile is a chair, convert to ExampleChair
+						// 将椅子转化为 ExampleChair
 						else if (type == TileID.Chairs && Main.tile[k, l - 1].TileType == TileID.Chairs) {
 							Main.tile[k, l].TileType = (ushort)ModContent.TileType<ExampleChair>();
 							Main.tile[k, l - 1].TileType = (ushort)ModContent.TileType<ExampleChair>();
 							WorldGen.SquareTileFrame(k, l);
 							NetMessage.SendTileSquare(-1, k, l, 1);
 						}
-						// If the tile is a workbench, convert to ExampleWorkBench
+						// 将工作台转化为 ExampleWorkBench
 						else if (type == TileID.WorkBenches && Main.tile[k - 1, l].TileType == TileID.WorkBenches) {
 							Main.tile[k, l].TileType = (ushort)ModContent.TileType<ExampleWorkbench>();
 							Main.tile[k - 1, l].TileType = (ushort)ModContent.TileType<ExampleWorkbench>();
