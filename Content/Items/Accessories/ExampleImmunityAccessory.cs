@@ -16,7 +16,7 @@ namespace ExampleMod.Content.Items.Accessories
 			Item.height = 32;
 			Item.maxStack = 1;
 			Item.value = Item.sellPrice(0, 1);
-			Item.accessory = true;
+			Item.accessory = true; // 是个饰品
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual) {

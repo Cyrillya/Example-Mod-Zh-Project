@@ -22,7 +22,7 @@ namespace ExampleMod.Content.Items.Accessories
 			Item.height = 28;
 			Item.value = Item.buyPrice(10);
 			Item.rare = ItemRarityID.Green;
-			Item.accessory = true;
+			Item.accessory = true; // 是个饰品
 
 			Item.defense = 1000;
 			Item.lifeRegen = 10;

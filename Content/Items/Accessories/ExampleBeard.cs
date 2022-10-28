@@ -26,7 +26,7 @@ namespace ExampleMod.Content.Items.Accessories
 			Item.maxStack = 1;
 			Item.color = Main.LocalPlayer.hairColor; // 本地人物的发色
 			Item.value = Item.sellPrice(0, 1);
-			Item.accessory = true;
+			Item.accessory = true; // 是个饰品
 			Item.vanity = true;
 		}
 	}

@@ -8,23 +8,23 @@ using Terraria.ModLoader;
 
 namespace ExampleMod.Content.Items.Accessories
 {
-	[AutoloadEquip(EquipType.Wings)]
+	[AutoloadEquip(EquipType.Wings)] // 记得给翅膀加这一行
 	public class ExampleWings : ModItem
 	{
-		// To see how this config option was added, see ExampleModConfig.cs
+		//相关的模组配置见 ExampleModConfig.cs
 		public override bool IsLoadingEnabled(Mod mod) {
 			return ModContent.GetInstance<ExampleModConfig>().ExampleWingsToggle;
 		}
 
 		public override void SetStaticDefaults() {
-			Tooltip.SetDefault("This is a modded wing.");
+			Tooltip.SetDefault("这是一双模组翅膀");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 
-			// These wings use the same values as the solar wings
-			// Fly time: 180 ticks = 3 seconds
-			// Fly speed: 9
-			// Acceleration multiplier: 2.5
+			// 翅膀的各项参数, 下列参数与日耀翅膀相同
+			// 飞行时间: 180 帧 = 3 秒 (实际上并不是, 但你这么算没问题的)
+			// 飞行速度: 9
+			// 加速度乘数: 2.5
 			ArmorIDs.Wing.Sets.Stats[Item.wingSlot] = new WingStats(180, 9f, 2.5f);
 		}
 
@@ -38,19 +38,19 @@ namespace ExampleMod.Content.Items.Accessories
 
 		public override void VerticalWingSpeeds(Player player, ref float ascentWhenFalling, ref float ascentWhenRising,
 			ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend) {
-			ascentWhenFalling = 0.85f; // Falling glide speed
-			ascentWhenRising = 0.15f; // Rising speed
-			maxCanAscendMultiplier = 1f;
+			ascentWhenFalling = 0.85f; // 滑翔速度
+			ascentWhenRising = 0.15f; // 爬升速度
+			maxCanAscendMultiplier = 1f; // ??? (待补充)
 			maxAscentMultiplier = 3f;
 			constantAscend = 0.135f;
 		}
 
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		// 合成配方的创建详见 Content/ExampleRecipes.cs
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<ExampleItem>()
 				.AddTile<Tiles.Furniture.ExampleWorkbench>()
-				.SortBefore(Main.recipe.First(recipe => recipe.createItem.wingSlot != -1)) // Places this recipe before any wing so every wing stays together in the crafting menu.
+				.SortBefore(Main.recipe.First(recipe => recipe.createItem.wingSlot != -1)) // 将此配方置于所有翅膀之前以使配方目录中的翅膀都被放在一起
 				.Register();
 		}
 	}
