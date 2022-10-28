@@ -100,7 +100,6 @@ namespace ExampleMod.Content.Items.Accessories
 				Vector2 newVelocity = Player.velocity;
 
 				switch (DashDir) {
-					// Only apply the dash velocity if our current speed in the wanted direction is less than DashVelocity
 					// 仅在当前轴向速度小于冲刺初速度的情况下开冲 (不然反而减速了)
 					case DashUp when Player.velocity.Y > -DashVelocity: // "为啥这里不要写?" 答: 看看switch的语法
 					case DashDown when Player.velocity.Y < DashVelocity: {

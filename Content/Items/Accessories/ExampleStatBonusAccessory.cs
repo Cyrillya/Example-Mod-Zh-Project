@@ -1,6 +1,6 @@
 ﻿using ExampleMod.Content.DamageClasses;
 using Terraria;
-using Terraria.GameContent.Creative;
+// using Terraria.GameContent.Creative;
 using Terraria.ModLoader;
 
 namespace ExampleMod.Content.Items.Accessories
@@ -8,16 +8,18 @@ namespace ExampleMod.Content.Items.Accessories
 	public class ExampleStatBonusAccessory : ModItem
 	{
 		public override void SetStaticDefaults() {
-			Tooltip.SetDefault("25% increased damage, this is an additive multiplier with other damage bonuses\n"
-							 + "12% increased multiplicative damage multiplier; this is multiplicative with other damage bonuses\n"
-							 + "Increases base damage for all weapons by 4\n"
-							 + "Increases total damage for all weapons by 5\n"
-							 + "10% increased melee crit chance\n"
-							 + "100% increased example knockback\n"
-							 + "Magic attacks ignore an additional 5 defense points\n"
-							 + "Increases ranged firing speed by 15%");
+			Tooltip.SetDefault("提升25%伤害, 直接乘算\n"
+							 + "伤害提升至112%, 最终乘算\n"
+							 + "提升4基础伤害, 直接加算\n"
+							 + "提升5总伤害, 最终加算\n"
+							 + "公式: 伤害 = (初始伤害 + 4) * (1 + 25%) * 112% + 5\n"
+							 + "提升10%近战暴击率\n"
+							 + "提升100%示例(伤害类型的)击退\n"
+							 + "提升5魔法盔甲穿透\n"
+							 + "提升15%远程攻速");
 
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+			// CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+			SacrificeTotal = 1; // 上一行与这一行的效果是一样的, 旅途研究所需数量, 只是下面这个更简洁, 还不需要 using Terraria.GameContent.Creative;
 		}
 
 		public override void SetDefaults() {
@@ -27,39 +29,39 @@ namespace ExampleMod.Content.Items.Accessories
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual) {
-			// GetDamage returns a reference to the specified damage class' damage StatModifier.
-			// Since it doesn't return a value, but a reference to it, you can freely modify it with mathematics operators (+, -, *, /, etc.).
-			// StatModifier is a structure that separately holds float additive and multiplicative modifiers, as well as base damage and flat damage.
-			// When StatModifier is applied to a value, its additive modifiers are applied before multiplicative ones.
-			// Base damage is added directly to the weapon's base damage and is affected by damage bonuses, while flat damage is applied after all other calculations.
-			// In this case, we're doing a number of things:
-			// - Adding 25% damage, additively. This is the typical "X% damage increase" that accessories use, use this one.
-			// - Adding 12% damage, multiplicatively. This effect is almost never useds in Terraria, typically you want to use the additive multiplier above. It is extremely hard to correctly balance the game with multiplicative bonuses.
-			// - Adding 4 base damage.
-			// - Adding 5 flat damage.
-			// Since we're using DamageClass.Generic, these bonuses apply to ALL damage the player deals.
+			// GetDamage 返回特定伤害类型的 StatModifier 的引用
+			// 因为它返回的是 StatModifier 的引用, 所以你可以自由地用数学运算符修改它 (+, -, *, / 等).
+			// StatModifier 是一个分别保存了直接乘算 (additive) 和最终乘算 (multiplicative) 的乘数的结构体, 还包括对于基础伤害 (base) 和总伤害 (flat) 的加成
+			// 当 StatModifier 被施加于一个值时, 其直接乘算的乘数在最终乘算的乘数前生效
+			// 基础伤害直接加算于武器原版的伤害, 受其它伤害加成影响; 总伤害加成在其它加成后生效
+			// 在此示例中, 我们:
+			// - 提升25%伤害, 直接乘算. 典型的 "提升X%伤害" 用的就是这个
+			// - 伤害提升至112%, 最终乘算. 原版中几乎没有用这个效果(蘑菇头, 箭术药水等), 一般用的是上面的 additive 乘数. 此种加成是极难平衡的
+			// - 提升4基础伤害
+			// - 提升5总伤害
+			// 公式: 伤害 = (初始伤害 + 4 + 其它base加成) * (1 + 25% + 其它additive加成) * 112% * 其它multiplicative加成 + 5 + 其它flat加成
+			// 因为我们用的是 DamageClass.Generic, 所有非"无"类型伤害受到了加成
 			player.GetDamage(DamageClass.Generic) += 0.25f;
 			player.GetDamage(DamageClass.Generic) *= 1.12f;
 			player.GetDamage(DamageClass.Generic).Base += 4f;
 			player.GetDamage(DamageClass.Generic).Flat += 5f;
 
-			// GetCrit, similarly to GetDamage, returns a reference to the specified damage class' crit chance.
-			// In this case, we're adding 10% crit chance, but only for the melee DamageClass (as such, only melee weapons will receive this bonus).
-			// NOTE: Once all crit calculations are complete, a weapon or class' total crit chance is typically cast to an int. Plan accordingly.
+			// GetCrit 返回特定伤害类型的暴击率的引用
+			// 此示例中, 我们提升10%暴击率, 但只有近战伤害受到加成
+			// 注意: 暴击率作为 float 计算完成后会被转换为 int
 			player.GetCritChance(DamageClass.Melee) += 10f;
 
-			// GetAttackSpeed is functionally identical to GetDamage and GetKnockback; it's for attack speed.
-			// In this case, we'll make ranged weapons 15% faster to use overall.
-			// NOTE: Zero or a negative value as the result of these calculations will throw an exception. Plan accordingly.
+			// GetAttackSpeed 返回特定伤害类型的攻速的引用
+			// 在此示例中, 我们使所有远程武器提升15%攻速
+			// 注意: 若结果是0或负数, 将会抛出异常
 			player.GetAttackSpeed(DamageClass.Ranged) += 0.15f;
 
-			// GetArmorPenetration is functionally identical to GetCritChance, but for the armor penetration stat instead.
-			// In this case, we'll add 5 armor penetration to magic weapons.
-			// NOTE: Once all armor pen calculations are complete, the final armor pen amount is cast to an int. Plan accordingly.
+			// GetArmorPenetration 是盔甲穿透, 相信你能举一反三
+			// 注意: 盔甲穿透作为 float 计算完成后会被转换为 int
 			player.GetArmorPenetration(DamageClass.Magic) += 5f;
 
-			// GetKnockback is functionally identical to GetDamage, but for the knockback stat instead.
-			// In this case, we're adding 100% knockback additively, but only for our custom example DamageClass (as such, only our example class weapons will receive this bonus).
+			// GetKnockback 击退
+			// 注意此例中应用模组伤害类型的方法
 			player.GetKnockback<ExampleDamageClass>() += 1f;
 		}
 	}
