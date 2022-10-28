@@ -77,7 +77,7 @@ namespace ExampleMod.Content.Projectiles.Minions
             Item.UseSound = SoundID.Item44; // 使用该武器时所播放的音效
 
             // 下面这些是召唤武器所需要的一些东西
-            Item.noMelee = true; // 使用该物品不会造成伤害
+            Item.noMelee = true; // 该物品自身不会造成伤害
             Item.DamageType = DamageClass.Summon; // 设置伤害类型为召唤伤害。如果你不设置它的话，那么这把武器无法吃到任何伤害加成。请确保你设置了伤害类型
             Item.buffType = ModContent.BuffType<ExampleSimpleMinionBuff>();
             // 不设置buff持续时间，不然工具提示里会有诸如1分钟持续时间这种东西
@@ -99,7 +99,7 @@ namespace ExampleMod.Content.Projectiles.Minions
             var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
             projectile.originalDamage = Item.damage;
 
-            // 因为你已经手动召唤了射弹，自然就没必要让它再召唤一个，所以 return false
+            // 因为你已经手动召唤了射弹，自然就没必要让游戏 (正常的Shoot) 再召唤一个，所以 return false
             return false;
         }
 
@@ -113,7 +113,7 @@ namespace ExampleMod.Content.Projectiles.Minions
         }
     }
 
-    // 这个召唤物ai展示了一些可能有些复杂的ai，但是我相信你看完这个文件后应该就能读懂这ai的实现了
+    // 这个召唤物ai对初学者来说可能有些复杂，但是我相信你看完这个文件后应该就能读懂这ai的实现了
     // 这个召唤物的进攻ai很简单: 如果有敌怪在召唤物周围43格图块（半径）内，它就会飞向敌怪进行接触伤害（如有多个敌怪则为离召唤物最近的那个）
     // 如果玩家锁定了某个敌怪，那么召唤物会直接朝被锁定的敌怪飞过去进行接触伤害
     // 如果没有敌怪符合可被攻击的条件，那么召唤物就会以一个很小的速度在玩家周围漂浮
@@ -128,9 +128,9 @@ namespace ExampleMod.Content.Projectiles.Minions
             // 如果你想拥有锁定敌怪功能那就开启这个
             ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
 
-            Main.projPet[Projectile.type] = true; // 让tml知道这东西是个宠物或召唤物
+            Main.projPet[Projectile.type] = true; // 让tML知道这东西是个宠物或召唤物
 
-            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // 这个东西很必要，可以在你召唤新召唤物时正确的顶替掉旧召唤物
+            ProjectileID.Sets.MinionSacrificable[Projectile.type] = true; // 使新召唤物能正确地顶替掉旧召唤物
             ProjectileID.Sets.CultistIsResistantTo[Projectile.type] = true; // 让拜月邪教教徒对这种召唤物有减伤（一般而言拜月邪教教徒会对带追踪的射弹有减伤）
         }
 
@@ -199,30 +199,30 @@ namespace ExampleMod.Content.Projectiles.Minions
             Vector2 idlePosition = owner.Center;
             idlePosition.Y -= 48f; // 向上移动48个像素（距离玩家中心3格图块）
 
-            // If your minion doesn't aimlessly move around when it's idle, you need to "put" it into the line of other summoned minions
-            // The index is projectile.minionPos
+			// 如果你的召唤物不在空闲时随便游荡, 那你就要手动将它们排好队
+			// 编号是 projectile.minionPos
             float minionPositionOffsetX = (10 + Projectile.minionPos * 40) * -owner.direction;
-            idlePosition.X += minionPositionOffsetX; // Go behind the player
+            idlePosition.X += minionPositionOffsetX; // 跑到玩家身后去
 
-            // All of this code below this line is adapted from Spazmamini code (ID 388, aiStyle 66)
+			// 下列代码来自魔焰眼召唤物 (ID 388, aiStyle 66)
 
-            // Teleport to player if distance is too big
+            // 距玩家过远时传送至玩家
             vectorToIdlePosition = idlePosition - Projectile.Center;
             distanceToIdlePosition = vectorToIdlePosition.Length();
 
             if (Main.myPlayer == owner.whoAmI && distanceToIdlePosition > 2000f)
             {
-                // Whenever you deal with non-regular events that change the behavior or position drastically, make sure to only run the code on the owner of the projectile,
-                // and then set netUpdate to true
+				// 当你要在特殊事件发生时突然改变某射弹的行为或位置时, 确保代码只在其主人的客户端上运行
+				// 再将 netUpdate 设为 true
                 Projectile.position = idlePosition;
                 Projectile.velocity *= 0.1f;
                 Projectile.netUpdate = true;
             }
 
-            // If your minion is flying, you want to do this independently of any conditions
+			// 如果你的召唤物是飞的, 那么你应该希望它们在任何情况下分开行动而不是挤在一起
             float overlapVelocity = 0.04f;
 
-            // Fix overlap with other minions
+            // 将挤在一起的射弹分开
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile other = Main.projectile[i];
@@ -252,18 +252,18 @@ namespace ExampleMod.Content.Projectiles.Minions
 
         private void SearchForTargets(Player owner, out bool foundTarget, out float distanceFromTarget, out Vector2 targetCenter)
         {
-            // Starting search distance
+            // 索敌范围
             distanceFromTarget = 700f;
             targetCenter = Projectile.position;
             foundTarget = false;
 
-            // This code is required if your minion weapon has the targeting feature
+			// 如果你的召唤武器可以锁定敌人, 那这是必须的
             if (owner.HasMinionAttackTargetNPC)
             {
                 NPC npc = Main.npc[owner.MinionAttackTargetNPC];
                 float between = Vector2.Distance(npc.Center, Projectile.Center);
 
-                // Reasonable distance away so it doesn't target across multiple screens
+				// 设置一个合理的范围, 这样它不会隔着几个屏幕的距离追人
                 if (between < 2000f)
                 {
                     distanceFromTarget = between;
@@ -274,7 +274,7 @@ namespace ExampleMod.Content.Projectiles.Minions
 
             if (!foundTarget)
             {
-                // This code is required either way, used for finding a target
+				// 下面的码是用来进行常规索敌的
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC npc = Main.npc[i];
@@ -285,8 +285,8 @@ namespace ExampleMod.Content.Projectiles.Minions
                         bool closest = Vector2.Distance(Projectile.Center, targetCenter) > between;
                         bool inRange = between < distanceFromTarget;
                         bool lineOfSight = Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, npc.position, npc.width, npc.height);
-                        // Additional check for this specific minion behavior, otherwise it will stop attacking once it dashed through an enemy while flying though tiles afterwards
-                        // The number depends on various parameters seen in the movement code below. Test different ones out until it works alright
+						// 这里进行额外的检测, 不然它冲过目标跑到物块后面就不攻击了
+						// 距离取决于下面移动部分的多个参数, 你可能需要测试调参
                         bool closeThroughWall = between < 100f;
 
                         if (((closest && inRange) || !foundTarget) && (lineOfSight || closeThroughWall))
@@ -299,25 +299,25 @@ namespace ExampleMod.Content.Projectiles.Minions
                 }
             }
 
-            // friendly needs to be set to true so the minion can deal contact damage
-            // friendly needs to be set to false so it doesn't damage things like target dummies while idling
-            // Both things depend on if it has a target or not, so it's just one assignment here
-            // You don't need this assignment if your minion is shooting things instead of dealing contact damage
+			// 将 friendly 设为 true 使召唤物能够造成接触伤害
+			// 闲置时则将 friendly 设为 false 以防它伤害到傀儡之类的东西
+			// 因为这取决于它有没有目标, 所以就在这设置
+			// 如果你的召唤物不造成接触伤害而是发射弹幕, 那就不需要这个了
             Projectile.friendly = foundTarget;
         }
 
         private void Movement(bool foundTarget, float distanceFromTarget, Vector2 targetCenter, float distanceToIdlePosition, Vector2 vectorToIdlePosition)
         {
-            // Default movement parameters (here for attacking)
+			// 默认移动参数 (此处是攻击时的)
             float speed = 8f;
             float inertia = 20f;
 
             if (foundTarget)
             {
-                // Minion has a target: attack (here, fly towards the enemy)
+				// 召唤物有目标就攻击 (此处是飞向敌人)
                 if (distanceFromTarget > 40f)
                 {
-                    // The immediate range around the target (so it doesn't latch onto it when close)
+					// 目标的迫近距离 (所以它不会在近距离上"粘"住目标)
                     Vector2 direction = targetCenter - Projectile.Center;
                     direction.Normalize();
                     direction *= speed;
@@ -327,32 +327,31 @@ namespace ExampleMod.Content.Projectiles.Minions
             }
             else
             {
-                // Minion doesn't have a target: return to player and idle
+                // 召唤物无目标就回到玩家身边并闲置
                 if (distanceToIdlePosition > 600f)
                 {
-                    // Speed up the minion if it's away from the player
+					// 离玩家比较远就加速
                     speed = 12f;
                     inertia = 60f;
                 }
                 else
                 {
-                    // Slow down the minion if closer to the player
+					// 离玩家较近就减速
                     speed = 4f;
                     inertia = 80f;
                 }
 
                 if (distanceToIdlePosition > 20f)
                 {
-                    // The immediate range around the player (when it passively floats about)
-
-                    // This is a simple movement formula using the two parameters and its desired direction to create a "homing" movement
+					// 闲置时玩家的迫近距离
+					// 这是一个使用两个速度变量和目标速度的简单"追踪"移动公式
                     vectorToIdlePosition.Normalize();
                     vectorToIdlePosition *= speed;
                     Projectile.velocity = (Projectile.velocity * (inertia - 1) + vectorToIdlePosition) / inertia;
                 }
                 else if (Projectile.velocity == Vector2.Zero)
                 {
-                    // If there is a case where it's not moving at all, give it a little "poke"
+					// 如果它完全不动, 那就让它稍微移动一下
                     Projectile.velocity.X = -0.15f;
                     Projectile.velocity.Y = -0.05f;
                 }
@@ -361,10 +360,10 @@ namespace ExampleMod.Content.Projectiles.Minions
 
         private void Visuals()
         {
-            // So it will lean slightly towards the direction it's moving
+			// 这样它就会朝正在移动的方向稍微倾斜一点
             Projectile.rotation = Projectile.velocity.X * 0.05f;
 
-            // This is a simple "loop through all frames from top to bottom" animation
+			// 简单地从上往下循环播放每一帧
             int frameSpeed = 5;
 
             Projectile.frameCounter++;
@@ -380,7 +379,7 @@ namespace ExampleMod.Content.Projectiles.Minions
                 }
             }
 
-            // Some visuals here
+            // 一些视觉效果
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 0.78f);
         }
     }
