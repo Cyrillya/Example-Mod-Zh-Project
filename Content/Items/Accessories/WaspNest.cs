@@ -8,16 +8,16 @@ using Mono.Cecil.Cil;
 
 namespace ExampleMod.Content.Items.Accessories
 {
-	[AutoloadEquip(EquipType.Back)]
+	[AutoloadEquip(EquipType.Back)] // 背在背上
 	public class WaspNest : ModItem
 	{
 		// Only gets run once per type
 		public override void Load() {
-			IL.Terraria.Player.beeType += HookBeeType;
+			IL.Terraria.Player.beeType += HookBeeType; // 呃呃, 懂IL的不需要我翻这些注释, 不懂的翻了也没用 (IL是孬的, 相同的效果可以在GlobalProjectile的OnSpawn里实现)
 		}
 
 		// This IL editing (Intermediate Language editing) example is walked through in the guide: https://github.com/tModLoader/tModLoader/wiki/Expert-IL-Editing#example---hive-pack-upgrade
-		private static void HookBeeType(ILContext il) {
+		private static void HookBeeType(ILContext il) { // 蜂巢背包的升级, 对黄蜂也生效
 			ILCursor c = new ILCursor(il);
 
 			// Try to find where 566 is placed onto the stack
