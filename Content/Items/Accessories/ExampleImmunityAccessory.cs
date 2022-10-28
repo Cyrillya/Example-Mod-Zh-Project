@@ -7,8 +7,8 @@ namespace ExampleMod.Content.Items.Accessories
 	public class ExampleImmunityAccessory : ModItem
 	{
 		public override void SetStaticDefaults() {
-			Tooltip.SetDefault("This is a modded cross necklace that increases your immunity time by 1 second.");
-			SacrificeTotal = 1;
+			Tooltip.SetDefault("这是个将你的无敌帧延长一秒的模组项链.");
+			SacrificeTotal = 1; // 旅途研究所需数量
 		}
 
 		public override void SetDefaults() {
@@ -20,8 +20,8 @@ namespace ExampleMod.Content.Items.Accessories
 		}
 
 		public override void UpdateAccessory(Player player, bool hideVisual) {
-			// Set the HasExampleImmunityAcc bool to true to ensure we have this accessory
-			// And apply the changes in ModPlayer.PostHurt correctly
+			// 将bool值 HasExampleImmunityAcc 设为true
+			// 然后在 ModPlayer.PostHurt 中写效果 (去看ExampleImmunityPlayer类中对这个值的操作)
 			player.GetModPlayer<ExampleImmunityPlayer>().HasExampleImmunityAcc = true;
 		}
 	}
