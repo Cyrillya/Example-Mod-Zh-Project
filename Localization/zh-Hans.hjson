@@ -102,7 +102,7 @@ Mods: {
 			ExampleLifeRegenDebuff: "火焰debuff"
 			AnimatedBuff : "有动态图表的buff"
 			Blocky : "结块"
-			ExampleCrateBuff : "示例宝匣buff
+			ExampleCrateBuff : "示例宝匣buff"
 			ExampleDefenseBuff : "示例防御buff"
 			ExampleMountBuff : "示例坐骑buff"
 		}
