@@ -191,5 +191,7 @@ Mods: {
 			ExampleTip2: "这是另一个由Example Mod添加的提示！"
 			DisabledExampleTip: "这条提示确实被加进了游戏，但是被Example Mod关闭了，你不会在游戏中看到这条提示。"
 		}
+
+		ModMenuName: "ModMenu示例"
 	}
 }

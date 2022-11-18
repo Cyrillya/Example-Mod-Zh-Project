@@ -177,5 +177,7 @@ Mods: {
 			ExampleTip2: "This is yet another tip added by Example Mod!"
 			DisabledExampleTip: "This tip will be added but then disabled by Example Mod."
 		}
+
+		ModMenuName: "Example ModMenu"
 	}
 }
