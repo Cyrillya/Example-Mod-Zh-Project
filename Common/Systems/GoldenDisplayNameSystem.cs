@@ -69,6 +69,7 @@ public class GoldenDisplayNameSystem : ModSystem
 		// 一定要记得调用原方法，不然你UI就没了
 		orig.Invoke(uiModItem, sb);
 
+		// 反射获取 _modName，后面修改以及绘制需要用到
 		// 找不到 _modName 就报错
 		if (_uiModItemType.GetField("_modName", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(uiModItem) is not UIText modName) {
 			throw new Exception("出错啦!");
@@ -79,16 +80,18 @@ public class GoldenDisplayNameSystem : ModSystem
 			return;
 		}
 
+		// 加载所需的资源
 		var texture = ModContent.Request<Texture2D>("ExampleMod/Assets/Textures/Shader/Golden");
 		var shader = ModContent.Request<Effect>("ExampleMod/Assets/Effects/Golden", AssetRequestMode.ImmediateLoad).Value;
 
 		// 传入 Shader 所需的参数
 		shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 0.25f);
-		Main.instance.GraphicsDevice.Textures[1] = texture.Value;
+		Main.instance.GraphicsDevice.Textures[1] = texture.Value; // 传入调色板
 
 		// 为什么y要-2呢？因为原版就这么写的。金色字实现的原理实际上是覆盖原版，所以要保证重合
 		var position = modName.GetDimensions().Position() - new Vector2(0f, 2f);
 
+		// 重新开启 SpriteBatch 以应用 Shader
 		sb.End();
 		// 这个Begin传参可以确保无关参数不被修改，以避免奇怪的错误
 		// (而且很方便，不用去找原版都用了哪些参数)
@@ -97,7 +100,8 @@ public class GoldenDisplayNameSystem : ModSystem
 
 		// 在开启 Shader 的情况下绘制字，注意别写成带描边的了，不然整个字就糊了
 		ChatManager.DrawColorCodedString(sb, FontAssets.MouseText.Value, modName.Text, position, Color.White, 0f, Vector2.Zero, Vector2.One);
-
+		
+		// 重新开启 SpriteBatch 以去除 Shader
 		sb.End();
 		sb.Begin(SpriteSortMode.Deferred, sb.GraphicsDevice.BlendState, sb.GraphicsDevice.SamplerStates[0],
 			sb.GraphicsDevice.DepthStencilState, sb.GraphicsDevice.RasterizerState, null, Main.UIScaleMatrix);
