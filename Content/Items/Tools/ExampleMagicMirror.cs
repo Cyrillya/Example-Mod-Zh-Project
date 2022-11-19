@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.GameContent.Creative;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ExampleMod.Content.Items.Tools
 {
-	// Magic Mirror is one of the only vanilla items that does its action somewhere other than the start of its animation, which is why we use code in UseStyle NOT UseItem.
-	// It may prove a useful guide for ModItems with similar behaviors.
+	// Magic Mirror 是为数不多的在动画起始之外的地方执行其操作的原版物品之一，这就是我们在 UseStyle 中使用代码而不是 UseItem 的原因。
+	// 对于具有类似行为的模组物品，它可能是一个有用的指南。
 	internal class ExampleMagicMirror : ExampleItem
 	{
 		private static readonly Color[] itemNameCycleColors = {
@@ -18,37 +19,40 @@ namespace ExampleMod.Content.Items.Tools
 			new Color(0, 106, 185),
 		};
 
-		public override string Texture => $"Terraria/Images/Item_{ItemID.IceMirror}"; // Copies the texture for the Ice Mirror, make your own texture if need be.
+		public override string Texture => $"Terraria/Images/Item_{ItemID.IceMirror}"; // 复制原版冰雪镜的贴图，你也可以用你自己的
 
 		public override void SetStaticDefaults() {
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1; // Amount of this item needed to research and become available in Journey mode's duplication menu. Amount used based upon vanilla Magic Mirror's amount needed.
+			// 该物品在旅行模式的复制菜单用于研究的数量，这里是根据原版魔镜所需的数量设置的
+			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+			DisplayName.SetDefault("Example Magic Mirror");
+			DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "示例魔镜");
 		}
 
 		public override void SetDefaults() {
-			Item.CloneDefaults(ItemID.IceMirror); // Copies the defaults from the Ice Mirror.
-			Item.color = Color.Violet; // Sets the item color
+			Item.CloneDefaults(ItemID.IceMirror); // 复制原版冰雪镜的属性
+			Item.color = Color.Violet; // 设置物品颜色
 		}
 
-		// UseStyle is called each frame that the item is being actively used.
+		// UseStyle 在物品使用的每一帧都会调用
 		public override void UseStyle(Player player, Rectangle heldItemFrame) {
-			// Each frame, make some dust
+			// 每帧生成一些粒子
 			if (Main.rand.NextBool()) {
 				Dust.NewDust(player.position, player.width, player.height, DustID.MagicMirror, 0f, 0f, 150, Color.White, 1.1f); // Makes dust from the player's position and copies the hitbox of which the dust may spawn. Change these arguments if needed.
 			}
 
-			// This sets up the itemTime correctly.
+			// 正确设置 itemTime
 			if (player.itemTime == 0) {
 				player.ApplyItemTime(Item);
 			}
 			else if (player.itemTime == player.itemTimeMax / 2) {
-				// This code runs once halfway through the useTime of the Item. You'll notice with magic mirrors you are still holding the item for a little bit after you've teleported.
-
-				// Make dust 70 times for a cool effect.
+				// 此代码在 Item 的 useTime 中途运行一次。 你会注意到在传送后你仍然会在一小段时间持有魔镜
+				
+				// 传送前，生成 70 个粒子用于传送特效
 				for (int d = 0; d < 70; d++) {
 					Dust.NewDust(player.position, player.width, player.height, DustID.MagicMirror, player.velocity.X * 0.5f, player.velocity.Y * 0.5f, 150, default, 1.5f);
 				}
 
-				// This code releases all grappling hooks and kills/despawns them.
+				// 此代码会使所有钩爪消失
 				player.grappling[0] = -1;
 				player.grapCount = 0;
 
@@ -58,10 +62,10 @@ namespace ExampleMod.Content.Items.Tools
 					}
 				}
 
-				// The actual method that moves the player back to bed/spawn.
+				// 将玩家移回床上/重生点的方法
 				player.Spawn(PlayerSpawnContext.RecallFromItem);
-
-				// Make dust 70 times for a cool effect. This dust is the dust at the destination.
+				
+				// 传送后，生成 70 个粒子用于传送特效
 				for (int d = 0; d < 70; d++) {
 					Dust.NewDust(player.position, player.width, player.height, DustID.MagicMirror, 0f, 0f, 150, default, 1.5f);
 				}
@@ -69,7 +73,7 @@ namespace ExampleMod.Content.Items.Tools
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips) {
-			// This code shows using Color.Lerp,  Main.GameUpdateCount, and the modulo operator (%) to do a neat effect cycling between 4 custom colors.
+			// 此代码显示使用 Color.Lerp、Main.GameUpdateCount 和取模运算符 (%) 在 4 种自定义颜色之间进行巧妙的循环。
 			int numColors = itemNameCycleColors.Length;
 			
 			foreach (TooltipLine line2 in tooltips) {
@@ -82,8 +86,8 @@ namespace ExampleMod.Content.Items.Tools
 				}
 			}
 		}
-
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		
+		// 合成配方的创建详见 Content/ExampleRecipes.cs
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<ExampleItem>()

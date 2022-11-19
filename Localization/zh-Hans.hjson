@@ -46,7 +46,7 @@ Mods: {
 		}
 		
 		MapObject: {
-			ExampleClock: Example Clock
+			ExampleClock: 示例钟
 			ExamplePylonTile: "{$Mods.ExampleMod.ItemName.ExamplePylonItem}"
 			ExamplePylonTileAdvanced: "{$Mods.ExampleMod.ItemName.ExamplePylonItemAdvanced}"
 		}
@@ -63,10 +63,10 @@ Mods: {
 				'''
 			ExampleBugNet:
 				'''
-				Used to catch critters
-				Has a 20% chance to successfully catch lava critters
-				This increases to 50% if the Warmth Potion buff is active
-				Has a 5% chance to duplicate caught critters
+				用于捕捉小动物
+				有20%的概率成功捕捉熔岩动物
+				若拥有温暖药水效果，其几率上调为50%
+				有5%的概率获得两倍小动物
 				'''
 			ExampleSpecificAmmoGun:
 				'''
@@ -89,8 +89,8 @@ Mods: {
 		ItemName: {
 			ExamplePetItem: "{$Mods.ExampleMod.Common.PaperAirplane}"
 			ExampleSpecificAmmoGun: '''Example Rifle'''
-			ExamplePylonItem: "Example Pylon"
-			ExamplePylonItemAdvanced: "Unstable Pylon"
+			ExamplePylonItem: "示例晶塔"
+			ExamplePylonItemAdvanced: "不稳定的晶塔"
 		}
 		
 		ProjectileName: {
@@ -99,12 +99,12 @@ Mods: {
 		
 		BuffName: {
 			ExamplePetBuff: "{$Mods.ExampleMod.Common.PaperAirplane}"
-			ExampleLifeRegenDebuff: "火焰debuff"
-			AnimatedBuff : "有动态图表的buff"
+			ExampleLifeRegenDebuff: "火焰Debuff"
+			AnimatedBuff : "动态图标Buff"
 			Blocky : "结块"
-			ExampleCrateBuff : "示例宝匣buff"
-			ExampleDefenseBuff : "示例防御buff"
-			ExampleMountBuff : "示例坐骑buff"
+			ExampleCrateBuff : "示例宝匣Buff"
+			ExampleDefenseBuff : "示例防御Buff"
+			ExampleMountBuff : "示例坐骑Buff"
 		}
 		
 		BuffDescription: {
