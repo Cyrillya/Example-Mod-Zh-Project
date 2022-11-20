@@ -19,6 +19,7 @@ namespace ExampleMod.Common.Systems;
 /// Shader的fx文件在: Assets/Effects/Golden.fx<br/>
 /// Golden调色板文件在: Assets/Textures/Shader/Golden<br/>
 /// 这个类不是原ExampleMod具有的，而是汉化组成员Cyril塞的私货（
+/// 裙中世界教程: https://fs49.org/2022/11/20/%e9%80%9a%e8%bf%87-hookendpointmanager-%e5%8a%a8%e6%80%81%e6%8c%82%e9%92%a9%e5%ad%90/
 /// </summary>
 public class GoldenDisplayNameSystem : ModSystem
 {
