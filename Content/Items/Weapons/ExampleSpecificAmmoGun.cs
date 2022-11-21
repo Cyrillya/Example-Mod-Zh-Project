@@ -8,100 +8,111 @@ using Terraria.ModLoader;
 
 namespace ExampleMod.Content.Items.Weapons
 {
-	// This is an example gun designed to best demonstrate the various tML hooks that can be used for ammo-related specifications.
+	// 这是一把用于展示tML各种重写函数的示例枪械，这里面的东西也可用于使用弹药的枪械
 	public class ExampleSpecificAmmoGun : ModItem
 	{
 		public bool consumptionDamageBoost = false;
-		public override string Texture => "ExampleMod/Content/Items/Weapons/ExampleGun"; //TODO: remove when sprite is made for this
-		public override void SetStaticDefaults() {
+		public override string Texture => "ExampleMod/Content/Items/Weapons/ExampleGun";
+		public override void SetStaticDefaults()
+		{
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
-		public override void SetDefaults() {
-			// Common Properties
-			Item.width = 62; // Hitbox width of the item.
-			Item.height = 32; // Hitbox height of the item.
+		public override void SetDefaults()
+		{
+			// 普遍属性
+			Item.width = 62; // 物品的碰撞箱宽度(像素)
+			Item.height = 32; // 物品的碰撞箱高度(像素)
 			Item.scale = 0.75f;
-			Item.rare = ItemRarityID.Green; // The color that the item's name will be in-game.
+			Item.rare = ItemRarityID.Green; // 物品稀有度
 
-			// Use Properties
-			Item.useTime = 5; // The item's use time in ticks (60 ticks == 1 second.)
-			Item.useAnimation = 15; // The length of the item's use animation in ticks (60 ticks == 1 second.)
-			Item.reuseDelay = 5; // The amount of time the item waits between use animations (60 ticks == 1 second.)
-			Item.useStyle = ItemUseStyleID.Shoot; // How you use the item (swinging, holding out, etc.)
-			Item.autoReuse = true; // Whether or not you can hold click to automatically use it again.
+			// 使用属性
+			Item.useTime = 5; // 物品实际使用一次所需时间 (帧) (60帧=1秒)
+			Item.useAnimation = 15; // 物品动画播放一次所需时间 (帧) (60帧=1秒)
+			Item.reuseDelay = 5; // 物品动画播放完成后所等待的时间 (帧) (60帧=1秒)
+			Item.useStyle = ItemUseStyleID.Shoot; // 物品的使用类型 (如挥舞，刺出等)
+			Item.autoReuse = true; // 这个物品默认能不能自动挥舞
 			Item.UseSound = SoundID.Item11;
 
-			// Weapon Properties
-			Item.DamageType = DamageClass.Ranged; // Sets the damage type to ranged.
-			Item.damage = 20; // Sets the item's damage. Note that projectiles shot by this weapon will use its and the used ammunition's damage added together.
-			Item.knockBack = 5f; // Sets the item's knockback. Note that projectiles shot by this weapon will use its and the used ammunition's knockback added together.
-			Item.noMelee = true; // So the item's animation doesn't do damage.
+			// 武器属性
+			Item.DamageType = DamageClass.Ranged; // 伤害类型设置为远程
+			Item.damage = 20; // 物品基础伤害，注意: 射出的射弹伤害=武器伤害+弹药伤害
+			Item.knockBack = 5f; // 物品基础击退，注意: 射出的射弹击退=武器击退+弹药击退
+			Item.noMelee = true; // 让这个物品的使用动画不会造成伤害 (指枪托近战怼人)
 
-			// Gun Properties
-			Item.shoot = ProjectileID.PurificationPowder; // For some reason, all the guns in the vanilla source have this.
-			Item.shootSpeed = 16f; // The speed of the projectile (measured in pixels per frame.)
-			Item.useAmmo = AmmoID.Bullet; // The "ammo Id" of the ammo item that this weapon uses. Ammo IDs are magic numbers that usually correspond to the item id of one item that most commonly represent the ammo type.
+			// 枪属性
+			Item.shoot = ProjectileID.PurificationPowder; // 出于某种原因，原版枪的 Item.shoot 都是这么设置的，实际射弹基于弹药以及 Shoot() 相关代码
+			Item.shootSpeed = 16f; // 射弹的速度 (像素/帧) (比如这里是每帧16像素，也就是960像素每秒，即60物块每秒)
+			Item.useAmmo = AmmoID.Bullet; // 物品使用的弹药类型ID，用 AmmoID.XX 来选一个原版弹药类型，这里是所有子弹的意思
 		}
 
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
-		public override void AddRecipes() {
+		// 这里写的是合成配方，合成配方在 Content/ExampleRecipes.cs 有更详尽的介绍
+		public override void AddRecipes()
+		{
 			CreateRecipe()
 				.AddIngredient<ExampleItem>()
 				.AddTile<Tiles.Furniture.ExampleWorkbench>()
 				.Register();
 		}
 
-		public override Vector2? HoldoutOffset() {
+		// 通过这个重写函数修改武器持握在玩家手上时的位置 (让他握着枪柄而不是反重力悬空)
+		public override Vector2? HoldoutOffset()
+		{
 			return new Vector2(2f, -2f);
 		}
 
-		public override void UpdateInventory(Player player) {
+		public override void UpdateInventory(Player player)
+		{
 			consumptionDamageBoost = false;
 		}
 
-		public override bool? CanChooseAmmo(Item ammo, Player player) {
-			// CanChooseAmmo allows ammo to be chosen or denied independently of the useAmmo field's restrictions.
-			// (Its sister hook, CanBeChosenAsAmmo, is called on the ammo, and has the same function.)
-			// This returns null by default, which simply picks the ammo based on whether or not ammo.ammo == weapon.useAmmo.
-			// Returning true will forcibly allow an ammo to be used; returning false will forcibly deny it.
-			// For this example, we'll forcefully deny Cursed Bullets from being used as ammunition, but otherwise make no changes to the ammo pool.
+		public override bool? CanChooseAmmo(Item ammo, Player player)
+		{
+			// CanChooseAmmo 可以让弹药被选择或者拒绝，而不受到弹药类型的限制
+			// (在弹药里有一个与它相同功能的重写函数 CanBeChosenAsAmmo)
+			// 在默认情况下，它会返回 null，只根据你在上面写的 useAmmo 来选择弹药
+			// 返回 true 将会强制使用该弹药，返回 false 将会强制无法使用该弹药
+			// 在本示例中，我们将会强制阻止诅咒弹的使用，但不影响其它子弹类型的弹药
 			if (ammo.type == ItemID.CursedBullet)
 				return false;
 
-			// Oh, and a word of advice: always default to returning null, as per the above.
-			// Defaulting to returning true or false may have unintended consequences on what you can or can't use as ammo.
+			// 哦对了，我这边建议最好按照上面的说明，让它始终返回 null
+			// 你当然可以试着让它返回 true 或 false，不过这可能会产生一些难以预料的后果
 			return null;
 		}
 
-		public override bool CanConsumeAmmo(Item ammo, Player player) {
-			// CanConsumeAmmo allows ammo to be conserved or consumed depending on various conditions.
-			// (Its sister hook, CanBeConsumedAsAmmo, is called on the ammo, and has the same function.)
-			// This returns true by default; returning false for any reason will prevent ammo consumption.
-			// Note that returning true does NOT allow you to force ammo consumption; this currently requires use of IL editing or detours.
-			// For this example, the first shot will have a 20% chance to conserve ammo...
+		public override bool CanConsumeAmmo(Item ammo, Player player)
+		{
+			// CanConsumeAmmo 可以控制弹药是否会消耗
+			// (在弹药里有一个与它相同功能的重写函数 CanBeConsumedAsAmmo)
+			// 默认情况下会返回 true，当它返回 false 就会阻止弹药的消耗，不论为什么
+			// 注意，这并不代表返回 true 就会强制消耗弹药，像这样的功能需要IL或其它什么的
+			// 在本示例中，每轮发射的第一枪有20%的几率不消耗弹药
 			if (player.ItemUsesThisAnimation == 0)
 				return Main.rand.NextFloat() >= 0.20f;
-			// ...the second shot will have a 63% chance to conserve ammo...
+			// 而第二枪则有63%的几率不消耗弹药
 			else if (player.ItemUsesThisAnimation == 1)
 				return Main.rand.NextFloat() >= 0.63f;
-			// ...and the third shot will have a 36% chance to conserve ammo.
+			// 第三枪则为36%的几率
 			else if (player.ItemUsesThisAnimation == 2)
 				return Main.rand.NextFloat() >= 0.36f;
 
 			return true;
 		}
 
-		public override void OnConsumeAmmo(Item ammo, Player player) {
-			// OnConsumeAmmo allows you to make things happen when ammo is successfully consumed.
-			// (Its sister hook, OnConsumedAsAmmo, is called on the ammo, and has the same function.)
-			// Here, we'll set a bool to true which dictates whether or not the next shot should receive a damage bonus.
-			// This makes it so that shots which do consume ammunition gain a damage bonus in exchange for that consumption.
+		public override void OnConsumeAmmo(Item ammo, Player player)
+		{
+			// OnConsumeAmmo 将会在弹药被消耗时调用到
+			// (在弹药里有一个与它相同功能的重写函数 OnConsumedAsAmmo)
+			// 在这里，我们把一个负责控制伤害加成的bool变量设为 true
+			// 这会让这把枪在消耗弹药后的下一次射击获得伤害加成
 			consumptionDamageBoost = true;
 		}
 
-		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) {
-			if (consumptionDamageBoost) {
+		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback)
+		{
+			if (consumptionDamageBoost)
+			{
 				double newDamage = damage;
 				newDamage *= 1.20;
 				damage = (int)newDamage;
