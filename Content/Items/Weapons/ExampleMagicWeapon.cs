@@ -29,7 +29,7 @@ namespace ExampleMod.Content.Items.Weapons
 			Item.UseSound = SoundID.Item71;
 			Item.autoReuse = true;
 			Item.shoot = ProjectileID.BlackBolt; // 让这把武器发射玛瑙爆破枪所发射的射弹
-			Item.shootSpeed = 7; //射弹的速度 (像素/帧) (比如这里是每帧7像素，也就是420像素每秒，即26.25物块每秒)
+			Item.shootSpeed = 7; // 射弹的速度 (像素/帧) (比如这里是每帧7像素，也就是420像素每秒，即26.25物块每秒)
 			Item.crit = 32; // 武器的暴击率 (不包括默认4%暴击率) (游戏内的无加成情况下暴击率应为36%)
 			Item.mana = 11; // 使用该武器所需魔力
 		}
