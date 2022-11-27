@@ -117,7 +117,6 @@ namespace ExampleMod.Content.Items.Weapons
 
 		public override void ModifyShootStats(Player player, ref Vector2 position, ref Vector2 velocity, ref int type, ref int damage, ref float knockback) {
 			// 如果该变量为 true 则将本次伤害提高
-			// 提问：想一想，为什么不需要重置伤害？
 			if (consumptionDamageBoost) {
 				damage = (int)(damage * 1.2f);
 			}
