@@ -1,8 +1,10 @@
-﻿# Example Mod 注释中文化
+﻿# Example Mod 注释汉化
 
 *NOTE: This repository is a Example Mod port but with Chinese comments, for the original version of Example Mod [click here](https://github.com/tModLoader/tModLoader).*
 
 这是一个将Example Mod注释**汉化**的项目，用于帮助新手Mod制作者学习制作Mod，且不需要去啃原版Example Mod的生肉注释 (~~虽然有翻译软件这一回事~~)
+
+*注: 为确保在 tModLoader 默认版本可用，该汉化版本基于 tModLoader 仓库 [1.4-stable分支的 Example Mod](https://github.com/tModLoader/tModLoader/tree/1.4-stable/ExampleMod)*
 
 ## 我是来下载Example Mod的
 直接点击绿色的 `Code` 在下拉列表中选择 `Download ZIP` 后，将文件解压到模组源码文件夹下即可 ~~不过能找到这的大概不用教这个吧~~，记得将文件夹名字改为 `ExampleMod` !
