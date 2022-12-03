@@ -6,6 +6,8 @@
 
 *注: 为确保在 tModLoader 默认版本可用，该汉化版本基于 tModLoader 仓库 [1.4-stable分支的 Example Mod](https://github.com/tModLoader/tModLoader/tree/1.4-stable/ExampleMod)*
 
+*建议与 [tModLoader 注释汉化](https://github.com/Cyrillya/tModLoader-Document-Chinese) 配合使用*
+
 ## 我是来下载Example Mod的
 直接点击绿色的 `Code` 在下拉列表中选择 `Download ZIP` 后，将文件解压到模组源码文件夹下即可 ~~不过能找到这的大概不用教这个吧~~，记得将文件夹名字改为 `ExampleMod` !
 
