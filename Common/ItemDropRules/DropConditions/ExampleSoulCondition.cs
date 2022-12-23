@@ -11,7 +11,7 @@ namespace ExampleMod.Common.ItemDropRules.DropConditions
 			if (!info.IsInSimulation) {
 				// 如果是困难模式，不是小动物或无关紧要的敌人，并且玩家处于ExampleUndergroundBiome中，就可以掉落。（对于敌人的判断和原版是一致的）
 				// 这是从原版的 Conditions.SoulOfWhateverConditionCanDrop(info) 方法修改而来的
-				// 去掉了对洞穴层的限制，因为ExampleUndergroundBiome也延伸到了泥土层。
+				// 去掉了对洞穴层（即在下方使用/**/注释掉的条件代码）的限制，因为ExampleUndergroundBiome也延伸到了泥土层。
 
 				NPC npc = info.npc;
 				if (npc.boss || NPCID.Sets.CannotDropSouls[npc.type]) {

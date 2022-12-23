@@ -4,26 +4,29 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.GameContent.Creative;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace ExampleMod.Content.Items.Tools
 {
+	// 一些钩爪的概念可以看Wiki: https://terraria.wiki.gg/zh/wiki/%E9%92%A9%E7%88%AA
 	internal class ExampleHookItem : ModItem
 	{
 		public override void SetStaticDefaults() {
-			DisplayName.SetDefault("Example Hook"); // The item's name in-game.
+			DisplayName.SetDefault("Example Hook");
+			DisplayName.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "示例钩爪");
 
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1; // Amount of this item needed to research and become available in Journey mode's duplication menu. Amount based on vanilla hooks' amount needed
+			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
 		public override void SetDefaults() {
-			// Copy values from the Amethyst Hook
+			// 从原版紫晶钩爪复制基本属性
 			Item.CloneDefaults(ItemID.AmethystHook);
-			Item.shootSpeed = 18f; // This defines how quickly the hook is shot.
-			Item.shoot = ModContent.ProjectileType<ExampleHookProjectile>(); // Makes the item shoot the hook's projectile when used.
+			Item.shootSpeed = 18f; // 钩爪的射出速度
+			Item.shoot = ModContent.ProjectileType<ExampleHookProjectile>(); // 使用时射出自定义的钩爪射弹
 		}
-
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		
+		// 合成配方的创建详见 Content/ExampleRecipes.cs
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<ExampleItem>()
@@ -36,13 +39,13 @@ namespace ExampleMod.Content.Items.Tools
 	{
 		private static Asset<Texture2D> chainTexture;
 
-		public override void Load() { // This is called once on mod (re)load when this piece of content is being loaded.
-			// This is the path to the texture that we'll use for the hook's chain. Make sure to update it.
+		public override void Load() { // 在加载或重新加载时调用
+			// 这是钩子链的贴图路径，如果要在你的Mod使用，请确保修改了路径
 			chainTexture = ModContent.Request<Texture2D>("ExampleMod/Content/Items/Tools/ExampleHookChain");
 		}
 
-		public override void Unload() { // This is called once on mod reload when this piece of content is being unloaded.
-			// It's currently pretty important to unload your static fields like this, to avoid having parts of your mod remain in memory when it's been unloaded.
+		public override void Unload() { // 在卸载时调用
+			// 目前，像这样卸载静态字段非常重要，以避免卸载后部分Mod内容仍保留在内存中，占用内存
 			chainTexture = null;
 		}
 
@@ -51,13 +54,13 @@ namespace ExampleMod.Content.Items.Tools
 		}
 
 		public override void SetDefaults() {
-			Projectile.CloneDefaults(ProjectileID.GemHookAmethyst); // Copies the attributes of the Amethyst hook's projectile.
+			Projectile.CloneDefaults(ProjectileID.GemHookAmethyst); // 复制紫晶钩的射弹属性
 		}
 
-		// Use this hook for hooks that can have multiple hooks mid-flight: Dual Hook, Web Slinger, Fish Hook, Static Hook, Lunar Hook.
+		// 将此钩子用于在飞行途中可以有多个钩子的钩子，如: 双钩、蛛丝吊索、鱼钩、静止钩、月钩
 		public override bool? CanUseGrapple(Player player) {
 			int hooksOut = 0;
-			for (int l = 0; l < 1000; l++) {
+			for (int l = 0; l < Main.maxProjectiles; l++) {
 				if (Main.projectile[l].active && Main.projectile[l].owner == Main.myPlayer && Main.projectile[l].type == Projectile.type) {
 					hooksOut++;
 				}
@@ -66,14 +69,13 @@ namespace ExampleMod.Content.Items.Tools
 			return hooksOut <= 2;
 		}
 
-		// Return true if it is like: Hook, CandyCaneHook, BatHook, GemHooks
+		// 对于像 抓钩、糖棒钩、蝙蝠钩、宝石钩 这些仅能同时存在一个飞出射弹的钩爪，在这里返回 true
 		// public override bool? SingleGrappleHook(Player player)
 		// {
 		//	return true;
 		// }
 
-		// Use this to kill oldest hook. For hooks that kill the oldest when shot, not when the newest latches on: Like SkeletronHand
-		// You can also change the projectile like: Dual Hook, Lunar Hook
+		// 在射出时使目前存活时间最长的钩爪消失
 		// public override void UseGrapple(Player player, ref int type)
 		// {
 		//	int hooksOut = 0;
@@ -97,25 +99,25 @@ namespace ExampleMod.Content.Items.Tools
 		//	}
 		// }
 
-		// Amethyst Hook is 300, Static Hook is 600.
+		// 控制钩爪的最大射程，单位为像素。紫晶钩是300, 静止钩是600
 		public override float GrappleRange() {
 			return 500f;
 		}
 
 		public override void NumGrappleHooks(Player player, ref int numHooks) {
-			numHooks = 2; // The amount of hooks that can be shot out
+			numHooks = 2; // 可同时射出的钩爪数量
 		}
 
-		// default is 11, Lunar is 24
+		// 默认为11，月钩为24
 		public override void GrappleRetreatSpeed(Player player, ref float speed) {
-			speed = 18f; // How fast the grapple returns to you after meeting its max shoot distance
+			speed = 18f; // 达到最大射击距离后，钩爪返回的速度有多快
 		}
 
 		public override void GrapplePullSpeed(Player player, ref float speed) {
-			speed = 10; // How fast you get pulled to the grappling hook projectile's landing position
+			speed = 10; // 被拉到钩爪勾到的物块上的速度
 		}
 
-		// Adjusts the position that the player will be pulled towards. This will make them hang 50 pixels away from the tile being grappled.
+		// 调整玩家将被拉向的位置，这里使它们悬挂在距离被勾到的方块 50 像素的地方
 		public override void GrappleTargetPoint(Player player, ref float grappleX, ref float grappleY) {
 			Vector2 dirToPlayer = Projectile.DirectionTo(player.Center);
 			float hangDist = 50f;
@@ -123,7 +125,7 @@ namespace ExampleMod.Content.Items.Tools
 			grappleY += dirToPlayer.Y * hangDist;
 		}
 
-		// Draws the grappling hook's chain.
+		// 绘制钩爪链
 		public override bool PreDrawExtras() {
 			Vector2 playerCenter = Main.player[Projectile.owner].MountedCenter;
 			Vector2 center = Projectile.Center;
@@ -141,12 +143,12 @@ namespace ExampleMod.Content.Items.Tools
 
 				Color drawColor = Lighting.GetColor((int)center.X / 16, (int)(center.Y / 16));
 
-				// Draw chain
+				// 绘制链子
 				Main.EntitySpriteDraw(chainTexture.Value, center - Main.screenPosition,
 					chainTexture.Value.Bounds, drawColor, chainRotation,
 					chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0);
 			}
-			// Stop vanilla from drawing the default chain.
+			// 避免绘制原版默认的链子
 			return false;
 		}
 	}
