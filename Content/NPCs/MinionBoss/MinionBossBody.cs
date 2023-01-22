@@ -169,43 +169,43 @@ namespace ExampleMod.Content.NPCs.MinionBoss
 		}
 
 		public override void ModifyNPCLoot(NPCLoot npcLoot) {
-			// Do NOT misuse the ModifyNPCLoot and OnKill hooks: the former is only used for registering drops, the latter for everything else
+			// 不要误用钩子 ModifyNPCLoot 和 OnKill: 前者仅用于注册掉落物, 后者用于其它所有死亡事件
 
-			// Add the treasure bag using ItemDropRule.BossBag (automatically checks for expert mode)
+			// 用 ItemDropRule.BossBag 添加宝藏袋 (会自动判断专家模式)
 			npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<MinionBossBag>()));
 
-			// Trophies are spawned with 1/10 chance
+			// 1/10 的概率掉落纪念章
 			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Placeable.Furniture.MinionBossTrophy>(), 10));
 
-			// ItemDropRule.MasterModeCommonDrop for the relic
+			// 用 ItemDropRule.MasterModeCommonDrop 添加圣物掉落
 			npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<Items.Placeable.Furniture.MinionBossRelic>()));
 
-			// ItemDropRule.MasterModeDropOnAllPlayers for the pet
+			// 用 ItemDropRule.MasterModeDropOnAllPlayers 添加大师宠物掉落
 			npcLoot.Add(ItemDropRule.MasterModeDropOnAllPlayers(ModContent.ItemType<MinionBossPetItem>(), 4));
 
-			// All our drops here are based on "not expert", meaning we use .OnSuccess() to add them into the rule, which then gets added
+			// 以下的掉落全部基于"非专家" (普通模式), 意味着我们要用 .OnSuccess() 作为掉落规则的前置条件加入, 下一行声明了这一规则
 			LeadingConditionRule notExpertRule = new LeadingConditionRule(new Conditions.NotExpert());
 
-			// Notice we use notExpertRule.OnSuccess instead of npcLoot.Add so it only applies in normal mode
-			// Boss masks are spawned with 1/7 chance
+			// 注意, 这里我们用 notExpertRule.OnSuccess 而不是 npcLoot.Add , 这样它只在普通模式生效
+			// 1/7 的概率掉落Boss面具
 			notExpertRule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MinionBossMask>(), 7));
 
-			// This part is not required for a boss and is just showcasing some advanced stuff you can do with drop rules to control how items spawn
-			// We make 12-15 ExampleItems spawn randomly in all directions, like the lunar pillar fragments. Hereby we need the DropOneByOne rule,
-			// which requires these parameters to be defined
+			// 下面这一部分不是一个典型的原版Boss所必须的, 只是为了展示一些控制物品掉落的进阶技巧
+			// 我们使12~15个 ExampleItem 像四柱碎片那样到处随机生成. 因此我们要用到规则 DropOneByOne
+			// 这需要定义下面这些变量
 			int itemType = ModContent.ItemType<ExampleItem>();
 			var parameters = new DropOneByOne.Parameters() {
-				ChanceNumerator = 1,
-				ChanceDenominator = 1,
-				MinimumStackPerChunkBase = 1,
-				MaximumStackPerChunkBase = 1,
-				MinimumItemDropsCount = 12,
-				MaximumItemDropsCount = 15,
+				ChanceNumerator = 1, // 掉落率分子
+				ChanceDenominator = 1, // 掉落率分母
+				MinimumStackPerChunkBase = 1, // 每一个物品的堆叠数下限
+				MaximumStackPerChunkBase = 1, // 每一个物品的堆叠数上限
+				MinimumItemDropsCount = 12, // 物品数下限
+				MaximumItemDropsCount = 15, // 物品数上限
 			};
 
 			notExpertRule.OnSuccess(new DropOneByOne(itemType, parameters));
 
-			// Finally add the leading rule
+			// 最后添加这个 LeadingRule
 			npcLoot.Add(notExpertRule);
 		}
 
