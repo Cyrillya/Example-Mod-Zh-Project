@@ -11,53 +11,54 @@ namespace ExampleMod.Content.Items.Weapons
 	{
 		public override void SetStaticDefaults() {
 			Tooltip.SetDefault("This is a modded shotgun.");
+			Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "这是一把喷子");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
 		public override void SetDefaults() {
-			// Common Properties
-			Item.width = 44; // Hitbox width of the item.
-			Item.height = 18; // Hitbox height of the item.
-			Item.rare = ItemRarityID.Green; // The color that the item's name will be in-game.
+			// 普遍属性
+			Item.width = 44; // 物品的碰撞箱宽度(像素)
+			Item.height = 18; // 物品的碰撞箱高度(像素)
+			Item.rare = ItemRarityID.Green; // 物品稀有度
 
-			// Use Properties
-			Item.useTime = 55; // The item's use time in ticks (60 ticks == 1 second.)
-			Item.useAnimation = 55; // The length of the item's use animation in ticks (60 ticks == 1 second.)
-			Item.useStyle = ItemUseStyleID.Shoot; // How you use the item (swinging, holding out, etc.)
-			Item.autoReuse = true; // Whether or not you can hold click to automatically use it again.
-			Item.UseSound = SoundID.Item36; // The sound that this item plays when used.
+			// 使用属性
+			Item.useTime = 55; // 物品实际使用一次所需时间 (帧) (60帧=1秒)
+			Item.useAnimation = 55; // 物品动画播放一次所需时间 (帧) (60帧=1秒)
+			Item.useStyle = ItemUseStyleID.Shoot; // 物品的使用类型
+			Item.autoReuse = true; // 这个物品默认能不能自动挥舞
+			Item.UseSound = SoundID.Item36; // 物品被使用时播放的声音
 
-			// Weapon Properties
-			Item.DamageType = DamageClass.Ranged; // Sets the damage type to ranged.
-			Item.damage = 10; // Sets the item's damage. Note that projectiles shot by this weapon will use its and the used ammunition's damage added together.
-			Item.knockBack = 6f; // Sets the item's knockback. Note that projectiles shot by this weapon will use its and the used ammunition's knockback added together.
-			Item.noMelee = true; // So the item's animation doesn't do damage.
+			// 武器属性
+			Item.DamageType = DamageClass.Ranged; // 伤害类型设置为远程
+			Item.damage = 10; // 物品基础伤害，注意: 射出的射弹伤害=武器伤害+弹药伤害
+			Item.knockBack = 6f; // 物品基础击退，注意: 射出的射弹击退=武器击退+弹药击退
+			Item.noMelee = true; // 让这个物品的使用动画不会造成伤害 (∵嘴炮是近战伤害且喷子=嘴炮，∴喷子是近战伤害)
 
-			// Gun Properties
-			Item.shoot = ProjectileID.PurificationPowder; // For some reason, all the guns in the vanilla source have this.
-			Item.shootSpeed = 10f; // The speed of the projectile (measured in pixels per frame.)
-			Item.useAmmo = AmmoID.Bullet; // The "ammo Id" of the ammo item that this weapon uses. Ammo IDs are magic numbers that usually correspond to the item id of one item that most commonly represent the ammo type.
+			// 枪属性
+			Item.shoot = ProjectileID.PurificationPowder; // 出于某种原因，原版枪的 Item.shoot 都是这么设置的，实际射弹基于弹药以及 Shoot() 相关代码
+			Item.shootSpeed = 10f; // 射弹的速度 (像素/帧) (比如这里是每帧16像素，也就是960像素每秒，即60物块每秒)
+			Item.useAmmo = AmmoID.Bullet; // 物品使用的弹药类型ID，用 AmmoID.XX 来选一个原版弹药类型，这里是所有子弹的意思
 		}
 
 		public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-			const int NumProjectiles = 8; // The humber of projectiles that this gun will shoot.
+			const int NumProjectiles = 8; // 这把枪在每次射击时所发射出的子弹数量
 
 			for (int i = 0; i < NumProjectiles; i++) {
-				// Rotate the velocity randomly by 30 degrees at max.
+				// 让发射的子弹拥有随机的旋转角度。这里是上下各15°，总计30°
 				Vector2 newVelocity = velocity.RotatedByRandom(MathHelper.ToRadians(15));
 
-				// Decrease velocity randomly for nicer visuals.
+				// 随机降低子弹的速度以达到更好的视觉效果
 				newVelocity *= 1f - Main.rand.NextFloat(0.3f);
 
-				// Create a projectile.
+				// 创建射弹
 				Projectile.NewProjectileDirect(source, position, newVelocity, type, damage, knockback, player.whoAmI);
 			}
 
-			return false; // Return false because we don't want tModLoader to shoot projectile
+			return false; // 返回flase以防止tModLoader发射默认的射弹
 		}
 
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		// 这里写的是合成配方，合成配方在 Content/ExampleRecipes.cs 有更详尽的介绍
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<ExampleItem>()
@@ -65,7 +66,7 @@ namespace ExampleMod.Content.Items.Weapons
 				.Register();
 		}
 
-		// This method lets you adjust position of the gun in the player's hands. Play with these values until it looks good with your graphics.
+		// 通过这个重写函数修改武器持握在玩家手上时的位置 (让他握着枪柄而不是反重力悬空)
 		public override Vector2? HoldoutOffset() {
 			return new Vector2(-2f, -2f);
 		}

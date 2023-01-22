@@ -11,10 +11,12 @@ namespace ExampleMod.Content.Items.Consumables
 		public override void SetStaticDefaults() {
 			Tooltip.SetDefault("Increases chance to get a crate" +
 				"\nStacks with {$ItemName.CratePotion}");
+			Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "增加获得宝匣的概率" +
+				"\n可以与{$ItemName.CratePotion}的效果叠加");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 20;
 
-			// Dust that will appear in these colors when the item with ItemUseStyleID.DrinkLiquid is used
+			// 该物品的使用类型为DrinkLiquid时，会出现下面这些颜色的粒子
 			ItemID.Sets.DrinkParticleColors[Type] = new Color[3] {
 				new Color(240, 240, 240),
 				new Color(200, 200, 200),
@@ -34,11 +36,11 @@ namespace ExampleMod.Content.Items.Consumables
 			Item.consumable = true;
 			Item.rare = ItemRarityID.Green;
 			Item.value = Item.buyPrice(silver: 8);
-			Item.buffType = ModContent.BuffType<Buffs.ExampleCrateBuff>(); // Specify an existing buff to be applied when used.
-			Item.buffTime = 3 * 60 * 60; // The amount of time the buff declared in Item.buffType will last in ticks. Set to 3 minutes, as 60 ticks = 1 second.
+			Item.buffType = ModContent.BuffType<Buffs.ExampleCrateBuff>(); // 指定使用该时会获得的buff
+			Item.buffTime = 3 * 60 * 60; // 在这里可以设置buff的持续时间，让我们设置成3分钟。注意：单位为帧（60帧为1秒，所以要写成60 * 60 * 3）
 		}
 
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		// 这里写的是合成配方，合成配方在 Content/ExampleRecipes.cs 有更详尽的介绍
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient(ItemID.CratePotion, 4)
