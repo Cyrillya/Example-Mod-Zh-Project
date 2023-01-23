@@ -27,51 +27,51 @@ using Terraria.ModLoader.IO;
 
 namespace ExampleMod.Content.NPCs
 {
-	// [AutoloadHead] and NPC.townNPC are extremely important and absolutely both necessary for any Town NPC to work at all.
+	// [AutoloadHead] 这个对于城镇NPC来说非常重要，如果你想让你的城镇NPC有图标的话，你就加上
 	[AutoloadHead]
 	public class ExamplePerson : ModNPC
 	{
 		public int NumberOfTimesTalkedTo = 0;
 
 		public override void SetStaticDefaults() {
-			// DisplayName automatically assigned from localization files, but the commented line below is the normal approach.
+			// DisplayName从本地化文件自动匹配，但下面的注释行是正常的方法
 			// DisplayName.SetDefault("Example Person");
-			Main.npcFrameCount[Type] = 25; // The amount of frames the NPC has
+			Main.npcFrameCount[Type] = 25; // NPC所拥有的帧数
 
-			NPCID.Sets.ExtraFramesCount[Type] = 9; // Generally for Town NPCs, but this is how the NPC does extra things such as sitting in a chair and talking to other NPCs.
+			NPCID.Sets.ExtraFramesCount[Type] = 9; // 通常是城镇NPC，但这是NPC如何做额外的事情，如坐在椅子上和其他NPC交谈
 			NPCID.Sets.AttackFrameCount[Type] = 4;
-			NPCID.Sets.DangerDetectRange[Type] = 700; // The amount of pixels away from the center of the npc that it tries to attack enemies.
+			NPCID.Sets.DangerDetectRange[Type] = 700; // NPC试图攻击敌人的npc中心的范围（像素）
 			NPCID.Sets.AttackType[Type] = 0;
-			NPCID.Sets.AttackTime[Type] = 90; // The amount of time it takes for the NPC's attack animation to be over once it starts.
+			NPCID.Sets.AttackTime[Type] = 90; // NPC攻击动画开始后结束所需的时间
 			NPCID.Sets.AttackAverageChance[Type] = 30;
-			NPCID.Sets.HatOffsetY[Type] = 4; // For when a party is active, the party hat spawns at a Y offset.
+			NPCID.Sets.HatOffsetY[Type] = 4; // 当派对开始时，被帽子替换的Y偏移（也就是帽子的所在位置）
 
-			// Influences how the NPC looks in the Bestiary
+			// 这个是绘制NPC在图鉴里的形象
 			NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
-				Velocity = 1f, // Draws the NPC in the bestiary as if its walking +1 tiles in the x direction
-				Direction = 1 // -1 is left and 1 is right. NPCs are drawn facing the left by default but ExamplePerson will be drawn facing the right
-				// Rotation = MathHelper.ToRadians(180) // You can also change the rotation of an NPC. Rotation is measured in radians
-				// If you want to see an example of manually modifying these when the NPC is drawn, see PreDraw
+				Velocity = 1f, // 让NPC可以在图鉴中行走（就像是其他的城镇NPC一样)
+				Direction = 1 // -1是左，1是右。npc在默认情况下是面向左侧绘制的，但ExamplePerson将面向右侧绘制
+				// Rotation = MathHelper.ToRadians(180) // 你也可以改变NPC的旋转。旋转以弧度为单位
+				// 如果您想查看在绘制NPC时手动修改这些内容的示例，请参阅PreDraw
 			};
 
 			NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
 
-			// Set Example Person's biome and neighbor preferences with the NPCHappiness hook. You can add happiness text and remarks with localization (See an example in ExampleMod/Localization/en-US.lang).
+			// 使用NPCHappiness设置Person的生物群落和邻居偏好。你可以在本地化中添加幸福文本和备注(参见exampleemod / localization /en-US.lang中的例子)。
 			// NOTE: The following code uses chaining - a style that works due to the fact that the SetXAffection methods return the same NPCHappiness instance they're called on.
 			NPC.Happiness
-				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like) // Example Person prefers the forest.
-				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike) // Example Person dislikes the snow.
-				.SetBiomeAffection<ExampleSurfaceBiome>(AffectionLevel.Love) // Example Person likes the Example Surface Biome
-				.SetNPCAffection(NPCID.Dryad, AffectionLevel.Love) // Loves living near the dryad.
-				.SetNPCAffection(NPCID.Guide, AffectionLevel.Like) // Likes living near the guide.
-				.SetNPCAffection(NPCID.Merchant, AffectionLevel.Dislike) // Dislikes living near the merchant.
-				.SetNPCAffection(NPCID.Demolitionist, AffectionLevel.Hate) // Hates living near the demolitionist.
+				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like) // Example Person 更喜欢森林
+				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike) // Example Person 不喜欢雪原
+				.SetBiomeAffection<ExampleSurfaceBiome>(AffectionLevel.Love) // Example Person 喜欢 Example Surface Biome（生物群系）
+				.SetNPCAffection(NPCID.Dryad, AffectionLevel.Love) // 喜欢住在树妖附近
+				.SetNPCAffection(NPCID.Guide, AffectionLevel.Like) // 喜欢住在向导附近
+				.SetNPCAffection(NPCID.Merchant, AffectionLevel.Dislike) // 不喜欢住在商人附近
+				.SetNPCAffection(NPCID.Demolitionist, AffectionLevel.Hate) // 不喜欢住在爆破专家附近
 			; // < Mind the semicolon!
 		}
 
 		public override void SetDefaults() {
-			NPC.townNPC = true; // Sets NPC to be a Town NPC
-			NPC.friendly = true; // NPC Will not attack player
+			NPC.townNPC = true; // 设定NPC为城镇NPC
+			NPC.friendly = true; // NPC将不会攻击玩家
 			NPC.width = 18;
 			NPC.height = 40;
 			NPC.aiStyle = 7;
@@ -86,17 +86,17 @@ namespace ExampleMod.Content.NPCs
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
-			// We can use AddRange instead of calling Add multiple times in order to add multiple items at once
+			// 我们可以使用AddRange而不是多次调用Add，以便一次添加多个项目
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
-				// Sets the preferred biomes of this town NPC listed in the bestiary.
-				// With Town NPCs, you usually set this to what biome it likes the most in regards to NPC happiness.
+				// 设定图鉴中NPC的首选生物群系
+				// 对于城镇NPC，您通常会将其设置为它最喜欢的NPC生物群系。
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
 
-				// Sets your NPC's flavor text in the bestiary.
+				// 设定城镇NPC在图鉴中的文本（也就是描述）
 				new FlavorTextBestiaryInfoElement("Hailing from a mysterious greyscale cube world, the Example Person is here to help you understand everything about tModLoader."),
 
-				// You can add multiple elements if you really wanted to
-				// You can also use localization keys (see Localization/en-US.lang)
+				// 如果你想，你可以添加更多
+				// 您还可以使用本地化（请参阅 Localization/en-US.lang）
 				new FlavorTextBestiaryInfoElement("Mods.ExampleMod.Bestiary.ExamplePerson")
 			});
 		}
