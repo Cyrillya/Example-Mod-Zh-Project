@@ -82,6 +82,11 @@ Mods: {
 			Has no NPC requirements!
 			'''
 			ExamplePylonItemAdvanced: "Will randomly turn on and off, but otherwise can be teleported to without NPCs and in any biome!"
+			ExampleCratePotion:
+        	    '''
+        	    Increases chance to get a crate
+        		Stacks with {$ItemName.CratePotion}
+        		'''
 		}
 		
 		ItemName: {
@@ -89,6 +94,7 @@ Mods: {
 			ExampleSpecificAmmoGun: '''Example Rifle'''
 			ExamplePylonItem: "Example Pylon"
 			ExamplePylonItemAdvanced: "Unstable Pylon"
+			ExampleCratePotion: "Example Crate Potion"
 		}
 		
 		ProjectileName: {

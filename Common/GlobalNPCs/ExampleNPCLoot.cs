@@ -8,65 +8,71 @@ using System.Linq;
 
 namespace ExampleMod.Common.GlobalNPCs
 {
-	// This file shows numerous examples of what you can do with the extensive NPC Loot lootable system.
-	// You can find more info on the wiki: https://github.com/tModLoader/tModLoader/wiki/Basic-NPC-Drops-and-Loot-1.4
-	// Despite this file being GlobalNPC, everything here can be used with a ModNPC as well! See examples of this in the Content/NPCs folder.
+	// 此文件展示了大量 NPC 掉落系统的操作示例
+	// 你可在此英文 Wiki 中了解更多: https://github.com/tModLoader/tModLoader/wiki/Basic-NPC-Drops-and-Loot-1.4
+	// 中文教程可在裙中世界网站中找到: https://fs49.org/sample-page/
+	// 尽管此文件被标记为 GlobalNPC, 但其中的所有内容都可以在 ModNPC 中使用! 你可在 Content/NPCs 文件夹中找到使用示例
 	public class ExampleNPCLoot : GlobalNPC
 	{
-		// ModifyNPCLoot uses a unique system called the ItemDropDatabase, which has many different rules for many different drop use cases.
-		// Here we go through all of them, and how they can be used.
-		// There are tons of other examples in vanilla! In a decompiled vanilla build, GameContent/ItemDropRules/ItemDropDatabase adds item drops to every single vanilla NPC, which can be a good resource.
+		// ModifyNPCLoot 使用一个名为 ItemDropDatabase 的独特系统，该系统针对许多不同的掉落用例具有许多不同的规则。
+		// 在这里，我们将介绍它们的一些基本用法。
+		// 原版中还有很多其他例子！ 在反编译的原版代码中，你可以在 GameContent/ItemDropRules/ItemDropDatabase
+		// 找到所有的原版 NPC 物品掉落注册代码，可供参考。
 
 		public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot) {
-			if (!NPCID.Sets.CountsAsCritter[npc.type]) { // If npc is not a critter
-				// Make it drop ExampleItem.
+			if (!NPCID.Sets.CountsAsCritter[npc.type]) { // 如果 NPC 不是小动物
+				// 让它掉落 ExampleItem
 				npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ExampleItem>(), 1));
 
-				// ItemDropRule.Common is what you would use in most cases, it simply drops the item with a fractional chance specified.
-				// The chanceDenominator int is used for the denominator part of the fractional chance of dropping this item.
+				// 在大多数情况下会使用 ItemDropRule.Common，用于以指定的分数几率掉落物品。
+				// chanceDenominator 参数是用于掉落该物品的分数几率的分母部分。
 
-				// Drop an ExampleResearchPresent in journey mode with 2/7ths base chance.
+				// 在旅行模式中以 2/7 的几率掉落 ExampleResearchPresent
 				IItemDropRule presentDropRule = new LeadingConditionRule(new ExampleJourneyModeDropCondition());
 
-				// ItemDropRule.Common(...) does not let you specify the numerator, so you can use new CommonDrop(...) instead.
-				// (1 by default if using ItemDropRule.Common)
-				// For example, if you had a chanceDenominator as 7 and a chanceNumerator as 2, then the chance the item would drop is 2/7 or about 28%.
+				// ItemDropRule.Common(...) 方法不允许指定分子，因此可以改用 new CommonDrop(...)。
+				// (如果使用 ItemDropRule.Common，则分子默认为 1)
+				// 例如，如果分母(chanceDenominator)为 7，分子(chanceNumerator)为 2，则物品掉落的几率为 2/7，即约 28%。
 				presentDropRule.OnSuccess(new CommonDrop(ModContent.ItemType<ExampleResearchPresent>(), chanceDenominator: 7, chanceNumerator: 2));
 				npcLoot.Add(presentDropRule);
 			}
 
-			// We will now use the Guide to explain many of the other types of drop rules.
+			// 这里拿向导开刀，作为一个找到并移除原有规则的例子。
 			if (npc.type == NPCID.Guide) {
-				// RemoveWhere will remove any drop rule that matches the provided expression.
-				// To make your own expressions to remove vanilla drop rules, you'll usually have to study the original source code that adds those rules.
+				// RemoveWhere 将删除与提供的表达式匹配的任何规则。
+				// 要创建自己的表达式来删除原版掉落规则，一般来说必须查看添加这些规则的源码。
 				npcLoot.RemoveWhere(
-					// The following expression returns true if the following conditions are met:
-					rule => rule is ItemDropWithConditionRule drop // If the rule is an ItemDropWithConditionRule instance
-						&& drop.itemId == ItemID.GreenCap // And that instance drops a green cap
-						&& drop.condition is Conditions.NamedNPC npcNameCondition // ..And if its condition is that an npc name must match some string
-						&& npcNameCondition.neededName == "Andrew" // And the condition's string is "Andrew".
+					// 如果满足以下条件，则表达式返回 true：
+					rule => rule is ItemDropWithConditionRule drop // 如果规则是 ItemDropWithConditionRule 实例
+						&& drop.itemId == ItemID.GreenCap // 并且该实例会掉落一个绿帽
+						&& drop.condition is Conditions.NamedNPC npcNameCondition // 且该规则的条件是 NPC 名称必须匹配某个字符串
+						&& npcNameCondition.neededName == "Andrew" // 且该条件要求的字符串是“Andrew”
 				);
 
-				npcLoot.Add(ItemDropRule.Common(ItemID.GreenCap, 1)); // In conjunction with the above removal, this makes it so a guide with any name will drop the Green Cap.
+				// 删除了原版规则后，这里我们让所有的向导都掉落绿帽。
+				npcLoot.Add(ItemDropRule.Common(ItemID.GreenCap, 1));
 			}
 
-			// Editing an existing drop rule
+			// 修改原有的掉落规则
 			if (npc.type == NPCID.BloodNautilus) {
-				// Dreadnautilus, known as BloodNautilus in the code, drops SanguineStaff. The drop rate is 100% in Expert mode and 50% in Normal mode. This example will change that rate.
-				// The vanilla code responsible for this drop is: ItemDropRule.NormalvsExpert(4269, 2, 1)
-				// The NormalvsExpert method creates a DropBasedOnExpertMode rule, and that rule is made up of 2 CommonDrop rules. We'll need to use this information in our casting to properly identify the recipe to edit.
+				// 恐惧鹦鹉螺，在代码中被称为 BloodNautilus，掉落血红法杖。
+				// 掉率在专家模式下为 100%，在普通模式下为 50%。 这里我们将更改它的掉率。
+				// 对应的原版规则是：ItemDropRule.NormalvsExpert(4269, 2, 1)
+				// NormalvsExpert 方法创建一个 DropBasedOnExpertMode 规则，该规则由 2 个 CommonDrop 规则组成。
+				// 我们需要在匹配规则的表达式中使用这些信息来正确识别要编辑的配方。
 
-				// There are 2 options. One option is remove the original rule and then add back a similar rule. The other option is to modify the existing rule.
-				// It is preferred to modify the existing rule to preserve compatibility with other mods.
+				// 有两个选择。 一种选择是删除原始规则，然后重新添加类似的规则。 另一种选择是修改现有规则。
+				// 最好选择修改现有规则而不是移除，以保持与其他模组的兼容性。
 
-				// Adjust the existing rule: Change the Normal mode drop rate from 50% to 33.3%
+				// 调整现有规则：将普通模式掉落率从50%更改为33.3%
 				foreach (var rule in npcLoot.Get()) {
-					// You must study the vanilla code to know what to objects to cast to.
-					if (rule is DropBasedOnExpertMode drop && drop.ruleForNormalMode is CommonDrop normalDropRule && normalDropRule.itemId == ItemID.SanguineStaff)
+					// 必须查看原版代码以了解如何匹配到对应规则
+					if (rule is DropBasedOnExpertMode {ruleForNormalMode: CommonDrop {itemId: ItemID.SanguineStaff} normalDropRule})
 						normalDropRule.chanceDenominator = 3;
 				}
 
-				// Remove the rule, then add another rule: Change the Normal mode drop rate from 50% to 16.6%
+				// 你也可以选择删除规则，然后添加另一个规则
+				// 这里我们将普通模式掉落率从 50% 更改为 16.6%
 				/*
 				npcLoot.RemoveWhere(
 					rule => rule is DropBasedOnExpertMode drop && drop.ruleForNormalMode is CommonDrop normalDropRule && normalDropRule.itemId == ItemID.SanguineStaff
@@ -74,11 +80,13 @@ namespace ExampleMod.Common.GlobalNPCs
 				npcLoot.Add(ItemDropRule.NormalvsExpert(4269, 6, 1));
 				*/
 			}
-			// Editing an existing drop rule, but for a boss
-			// In addition to this code, we also do similar code in Common/GlobalItems/BossBagLoot.cs to edit the boss bag loot. Remember to do both if your edits should affect boss bags as well.
+
+			// 修改现有的 Boss 的掉落规则
+			// 除了这段代码，我们还在 Common/GlobalItems/BossBagLoot.cs 中写了类似的代码来修改宝藏袋的战利品。
+			// 如果你的修改应该影响宝藏袋，切记同时执行这两项操作。
 			if (npc.type == NPCID.QueenBee) {
 				foreach (var rule in npcLoot.Get()) {
-					if (rule is DropBasedOnExpertMode dropBasedOnExpertMode && dropBasedOnExpertMode.ruleForNormalMode is OneFromOptionsNotScaledWithLuckDropRule oneFromOptionsDrop && oneFromOptionsDrop.dropIds.Contains(ItemID.BeeGun)) {
+					if (rule is DropBasedOnExpertMode {ruleForNormalMode: OneFromOptionsNotScaledWithLuckDropRule oneFromOptionsDrop} && oneFromOptionsDrop.dropIds.Contains(ItemID.BeeGun)) {
 						var original = oneFromOptionsDrop.dropIds.ToList();
 						original.Add(ModContent.ItemType<Content.Items.Accessories.WaspNest>());
 						oneFromOptionsDrop.dropIds = original.ToArray();
@@ -86,8 +94,8 @@ namespace ExampleMod.Common.GlobalNPCs
 				}
 			}
 
-			if (npc.type == NPCID.Crimera || npc.type == NPCID.Corruptor) {
-				// Here we make use of our own special rule we created: drop during daytime
+			if (npc.type is NPCID.Crimera or NPCID.Corruptor) {
+				// 在这里，我们使用我们自己创建的特殊规则：仅在白天掉落
 				ExampleDropCondition exampleDropCondition = new ExampleDropCondition();
 				IItemDropRule conditionalRule = new LeadingConditionRule(exampleDropCondition);
 
@@ -95,24 +103,23 @@ namespace ExampleMod.Common.GlobalNPCs
 				if (npc.type == NPCID.Crimera) {
 					itemType = ItemID.RottenChunk;
 				}
-				// 33% chance to drop other corresponding item in addition
+				// 33% 几率掉落其他相应物品
 				IItemDropRule rule = ItemDropRule.Common(itemType, chanceDenominator: 3);
 
-				// Apply our item drop rule to the conditional rule
+				// 将我们的物品掉落规则链接到条件规则，也就是添加一个前提条件
 				conditionalRule.OnSuccess(rule);
-				// Add the rule
+				// 添加规则
 				npcLoot.Add(conditionalRule);
-				// It will result in the drop being shown in the bestiary, but only drop if the condition is true.
+				// 这将导致掉落物显示在怪物图鉴中，但只有在条件为真时才会真正掉落。
 			}
-
-			//TODO: Add the rest of the vanilla drop rules!!
 		}
 
-		// ModifyGlobalLoot allows you to modify loot that every NPC should be able to drop, preferably with a condition.
-		// Vanilla uses this for the biome keys, souls of night/light, as well as the holiday drops.
-		// Any drop rules in ModifyGlobalLoot should only run once. Everything else should go in ModifyNPCLoot.
+		// ModifyGlobalLoot 允许您修改每个 NPC 应该能够掉落的战利品，最好给全局掉落一个条件。
+		// 原版将其用于生物群落钥匙、光明/暗影之魂以及节日掉落物。
+		// ModifyGlobalLoot 中的任何掉落规则都应该只运行一次。 其他一切都应该放在 ModifyNPCLoot 中。
 		public override void ModifyGlobalLoot(GlobalLoot globalLoot) {
-			// If the ExampleSoulCondition is true, drop ExampleSoul 20% of the time. See Common/ItemDropRules/DropConditions/ExampleSoulCondition.cs for how it's determined
+			// 如果 ExampleSoulCondition 为真，则有 20% 的几率掉落 ExampleSoul
+			// 请参阅 Common/ItemDropRules/DropConditions/ExampleSoulCondition.cs 以了解相应条件判断
 			globalLoot.Add(ItemDropRule.ByCondition(new ExampleSoulCondition(), ModContent.ItemType<ExampleSoul>(), 5, 1, 1));
 		}
 	}

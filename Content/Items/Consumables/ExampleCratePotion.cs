@@ -9,11 +9,6 @@ namespace ExampleMod.Content.Items.Consumables
 	public class ExampleCratePotion : ModItem
 	{
 		public override void SetStaticDefaults() {
-			Tooltip.SetDefault("Increases chance to get a crate" +
-				"\nStacks with {$ItemName.CratePotion}");
-			Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "增加获得宝匣的概率" +
-				"\n可以与{$ItemName.CratePotion}的效果叠加");
-
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 20;
 
 			// 该物品的使用类型为DrinkLiquid时，会出现下面这些颜色的粒子
