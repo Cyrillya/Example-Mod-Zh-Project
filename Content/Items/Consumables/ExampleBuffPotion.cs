@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.GameContent.Creative;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using Terraria.Localization;
 
 namespace ExampleMod.Content.Items.Consumables
 {
@@ -10,10 +11,11 @@ namespace ExampleMod.Content.Items.Consumables
 	{
 		public override void SetStaticDefaults() {
 			Tooltip.SetDefault("Gives a light defense buff.");
+			Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "获得轻型防御效果");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 20;
 
-			// Dust that will appear in these colors when the item with ItemUseStyleID.DrinkLiquid is used
+			// 当使用有ItemUseStyleID.DrinkLiquid的物品时会出现以下颜色的尘埃效果
 			ItemID.Sets.DrinkParticleColors[Type] = new Color[3] {
 				new Color(240, 240, 240),
 				new Color(200, 200, 200),
@@ -33,8 +35,8 @@ namespace ExampleMod.Content.Items.Consumables
 			Item.consumable = true;
 			Item.rare = ItemRarityID.Orange;
 			Item.value = Item.buyPrice(gold: 1);
-			Item.buffType = ModContent.BuffType<Buffs.ExampleDefenseBuff>(); // Specify an existing buff to be applied when used.
-			Item.buffTime = 5400; // The amount of time the buff declared in Item.buffType will last in ticks. 5400 / 60 is 90, so this buff will last 90 seconds.
+			Item.buffType = ModContent.BuffType<Buffs.ExampleDefenseBuff>(); // 指定使用时获得的buff
+			Item.buffTime = 5400; // buff的持续时间，5400/60=90,所以这个buff会持续90秒
 		}
 	}
 }
