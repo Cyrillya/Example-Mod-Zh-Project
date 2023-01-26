@@ -1,4 +1,4 @@
-using ExampleMod.Content.Biomes;
+﻿using ExampleMod.Content.Biomes;
 using ExampleMod.Content.Dusts;
 using ExampleMod.Content.Items;
 using ExampleMod.Content.Items.Accessories;
@@ -27,51 +27,51 @@ using Terraria.ModLoader.IO;
 
 namespace ExampleMod.Content.NPCs
 {
-	// [AutoloadHead] and NPC.townNPC are extremely important and absolutely both necessary for any Town NPC to work at all.
+	// [AutoloadHead] 和 NPC.townNPC 都是必须的，缺失会导致城镇NPC不能正常生效
 	[AutoloadHead]
 	public class ExamplePerson : ModNPC
 	{
 		public int NumberOfTimesTalkedTo = 0;
 
 		public override void SetStaticDefaults() {
-			// DisplayName automatically assigned from localization files, but the commented line below is the normal approach.
+			// NPC显示的名字会自动从本地化文件（localization files）中选取，对于其他NPC需要用下面这行
 			// DisplayName.SetDefault("Example Person");
-			Main.npcFrameCount[Type] = 25; // The amount of frames the NPC has
+			Main.npcFrameCount[Type] = 25; // NPC的贴图帧数
 
-			NPCID.Sets.ExtraFramesCount[Type] = 9; // Generally for Town NPCs, but this is how the NPC does extra things such as sitting in a chair and talking to other NPCs.
+			NPCID.Sets.ExtraFramesCount[Type] = 9; // 城镇NPC的额外贴图，比如坐在椅子上与其他NPC交谈
 			NPCID.Sets.AttackFrameCount[Type] = 4;
-			NPCID.Sets.DangerDetectRange[Type] = 700; // The amount of pixels away from the center of the npc that it tries to attack enemies.
+			NPCID.Sets.DangerDetectRange[Type] = 700; // 城镇NPC的索敌范围（像素）
 			NPCID.Sets.AttackType[Type] = 0;
-			NPCID.Sets.AttackTime[Type] = 90; // The amount of time it takes for the NPC's attack animation to be over once it starts.
+			NPCID.Sets.AttackTime[Type] = 90; // 从NPC攻击开始至一次攻击结束的时间（90帧=1.5秒）
 			NPCID.Sets.AttackAverageChance[Type] = 30;
-			NPCID.Sets.HatOffsetY[Type] = 4; // For when a party is active, the party hat spawns at a Y offset.
+			NPCID.Sets.HatOffsetY[Type] = 4; // 进入派对状态时派对帽子的y值偏移
 
-			// Influences how the NPC looks in the Bestiary
+			// 影响NPC在生物图鉴中的展示状态
 			NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
-				Velocity = 1f, // Draws the NPC in the bestiary as if its walking +1 tiles in the x direction
-				Direction = 1 // -1 is left and 1 is right. NPCs are drawn facing the left by default but ExamplePerson will be drawn facing the right
-				// Rotation = MathHelper.ToRadians(180) // You can also change the rotation of an NPC. Rotation is measured in radians
-				// If you want to see an example of manually modifying these when the NPC is drawn, see PreDraw
+				Velocity = 1f, // 在生物图鉴中NPC以+1图格的速度前进（向右）
+				Direction = 1 // -1为向左，1为向右。NPC默认向左展示，但是这个示例里让他向右
+				// Rotation = MathHelper.ToRadians(180) // 你也可以修改NPC的旋转角度，角度以弧度为单位，使用MathHelper便捷地将角度转换为弧度
+				// 如果你还想进一步修改NPC的展示状态，使用PreDraw
 			};
 
 			NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
 
-			// Set Example Person's biome and neighbor preferences with the NPCHappiness hook. You can add happiness text and remarks with localization (See an example in ExampleMod/Localization/en-US.lang).
-			// NOTE: The following code uses chaining - a style that works due to the fact that the SetXAffection methods return the same NPCHappiness instance they're called on.
+			// 使用NPCHappiness来设置NPC的群系偏好。你可以在本地化文件中为NPC添加不同愉悦度的交谈文本（详见本地化文件 ExampleMod/Localization/zh-Hans.hjson）
+			// 注意：下面这段代码使用了链接——一种通过SetXAffection返回调用的相同NPCHappiness实例
 			NPC.Happiness
-				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like) // Example Person prefers the forest.
-				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike) // Example Person dislikes the snow.
-				.SetBiomeAffection<ExampleSurfaceBiome>(AffectionLevel.Love) // Example Person likes the Example Surface Biome
-				.SetNPCAffection(NPCID.Dryad, AffectionLevel.Love) // Loves living near the dryad.
-				.SetNPCAffection(NPCID.Guide, AffectionLevel.Like) // Likes living near the guide.
-				.SetNPCAffection(NPCID.Merchant, AffectionLevel.Dislike) // Dislikes living near the merchant.
-				.SetNPCAffection(NPCID.Demolitionist, AffectionLevel.Hate) // Hates living near the demolitionist.
-			; // < Mind the semicolon!
+				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like) // 这个NPC喜欢森林
+				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike) // 不喜欢雪地
+				.SetBiomeAffection<ExampleSurfaceBiome>(AffectionLevel.Love) // 爱ExampleSurfaceBiome（示例地表群系）
+				.SetNPCAffection(NPCID.Dryad, AffectionLevel.Love) // 爱树精
+				.SetNPCAffection(NPCID.Guide, AffectionLevel.Like) // 喜欢向导
+				.SetNPCAffection(NPCID.Merchant, AffectionLevel.Dislike) // 不喜欢商人
+				.SetNPCAffection(NPCID.Demolitionist, AffectionLevel.Hate) // 讨厌爆破专家
+			; // 👈别忘了这个分号
 		}
 
 		public override void SetDefaults() {
-			NPC.townNPC = true; // Sets NPC to be a Town NPC
-			NPC.friendly = true; // NPC Will not attack player
+			NPC.townNPC = true; // 将NPC标记为城镇NPC
+			NPC.friendly = true; // NPC不会攻击玩家
 			NPC.width = 18;
 			NPC.height = 40;
 			NPC.aiStyle = 7;
@@ -86,30 +86,30 @@ namespace ExampleMod.Content.NPCs
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
-			// We can use AddRange instead of calling Add multiple times in order to add multiple items at once
+			// 我们使用AddRange而不是多次使用Add来添加多个条目
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
-				// Sets the preferred biomes of this town NPC listed in the bestiary.
-				// With Town NPCs, you usually set this to what biome it likes the most in regards to NPC happiness.
+				// 设置生物图鉴中展示NPC的背景
+				// 一般来说我们选择城镇NPC最喜欢的环境作为他的展示背景
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
 
-				// Sets your NPC's flavor text in the bestiary.
+				// 设置生物图鉴中的描述文字
 				new FlavorTextBestiaryInfoElement("Hailing from a mysterious greyscale cube world, the Example Person is here to help you understand everything about tModLoader."),
 
-				// You can add multiple elements if you really wanted to
-				// You can also use localization keys (see Localization/en-US.lang)
+				// 如果你想的话可以加更多东西
+				// 使用本地化文件进行翻译 (Localization/zh-Hans.hjson)
 				new FlavorTextBestiaryInfoElement("Mods.ExampleMod.Bestiary.ExamplePerson")
 			});
 		}
 
-		// The PreDraw hook is useful for drawing things before our sprite is drawn or running code before the sprite is drawn
-		// Returning false will allow you to manually draw your NPC
+		// PreDraw 用于在绘制对象前绘制一些东西或运行一些代码
+		// 返回值为false可以让你完全手动绘制这个NPC
 		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-			// This code slowly rotates the NPC in the bestiary
-			// (simply checking NPC.IsABestiaryIconDummy and incrementing NPC.Rotation won't work here as it gets overridden by drawModifiers.Rotation each tick)
+			// 这段代码让NPC在生物图鉴中慢慢旋转
+			// （仅仅检查是否为图鉴显示 NPC.IsABestiaryIconDumm 然后增加旋转角度 NPC.Rotation 不会生效，因为会被每帧中后执行的 drawModifiers.Rotation 覆盖掉）
 			if (NPCID.Sets.NPCBestiaryDrawOffset.TryGetValue(Type, out NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers)) {
 				drawModifiers.Rotation += 0.001f;
 
-				// Replace the existing NPCBestiaryDrawModifiers with our new one with an adjusted rotation
+				// 将 NPCBestiaryDrawModifiers 增加一点旋转之后更新掉
 				NPCID.Sets.NPCBestiaryDrawOffset.Remove(Type);
 				NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
 			}
@@ -125,14 +125,14 @@ namespace ExampleMod.Content.NPCs
 			}
 		}
 
-		public override bool CanTownNPCSpawn(int numTownNPCs, int money) { // Requirements for the town NPC to spawn.
+		public override bool CanTownNPCSpawn(int numTownNPCs, int money) { // 判断城镇NPC生成条件
 			for (int k = 0; k < 255; k++) {
 				Player player = Main.player[k];
 				if (!player.active) {
 					continue;
 				}
 
-				// Player has to have either an ExampleItem or an ExampleBlock in order for the NPC to spawn
+				// 这里我们设置玩家身上要有 ExampleItem 或者 ExampleBlock 才会生成这个NPC
 				if (player.inventory.Any(item => item.type == ModContent.ItemType<ExampleItem>() || item.type == ModContent.ItemType<Items.Placeable.ExampleBlock>())) {
 					return true;
 				}
@@ -141,7 +141,7 @@ namespace ExampleMod.Content.NPCs
 			return false;
 		}
 
-		// Example Person needs a house built out of ExampleMod tiles. You can delete this whole method in your townNPC for the regular house conditions.
+		// 这里我们要求这个NPC仅接受由 ExampleMod 添加的图格制成的房屋，如果仅需使用原版的房屋判定，这个方法直接删了就行
 		public override bool CheckConditions(int left, int right, int top, int bottom) {
 			int score = 0;
 			for (int x = left; x <= right; x++) {
@@ -192,7 +192,7 @@ namespace ExampleMod.Content.NPCs
 			if (partyGirl >= 0 && Main.rand.NextBool(4)) {
 				chat.Add(Language.GetTextValue("Mods.ExampleMod.Dialogue.ExamplePerson.PartyGirlDialogue", Main.npc[partyGirl].GivenName));
 			}
-			// These are things that the NPC has a chance of telling you when you talk to it.
+			// 这是NPC的交谈内容，这里使用了key，指向了本地化文件，查看 Localization/zh-Hans.hjson 了解具体格式要求
 			chat.Add(Language.GetTextValue("Mods.ExampleMod.Dialogue.ExamplePerson.StandardDialogue1"));
 			chat.Add(Language.GetTextValue("Mods.ExampleMod.Dialogue.ExamplePerson.StandardDialogue2"));
 			chat.Add(Language.GetTextValue("Mods.ExampleMod.Dialogue.ExamplePerson.StandardDialogue3"));
@@ -201,14 +201,14 @@ namespace ExampleMod.Content.NPCs
 
 			NumberOfTimesTalkedTo++;
 			if (NumberOfTimesTalkedTo >= 10) {
-				//This counter is linked to a single instance of the NPC, so if ExamplePerson is killed, the counter will reset.
+				// 这个 NumberOfTimesTalkedTo 计数器是绑定在NPC身上的，如果NPC寄了，新的NPC是一个新的个体，就会丢失掉这个计数器
 				chat.Add(Language.GetTextValue("Mods.ExampleMod.Dialogue.ExamplePerson.TalkALot"));
 			}
 
-			return chat; // chat is implicitly cast to a string.
+			return chat; // 上面的那些key会在游戏中被自动转换为本地化文件 Localization/zh-Hans.hjson 中的字符串
 		}
 
-		public override void SetChatButtons(ref string button, ref string button2) { // What the chat buttons are when you open up the chat UI
+		public override void SetChatButtons(ref string button, ref string button2) { // 设置聊天UI中的交谈按钮位置
 			button = Language.GetTextValue("LegacyInterface.28");
 			button2 = "Awesomeify";
 			if (Main.LocalPlayer.HasItem(ItemID.HiveBackpack)) {
@@ -218,16 +218,19 @@ namespace ExampleMod.Content.NPCs
 
 		public override void OnChatButtonClicked(bool firstButton, ref bool shop) {
 			if (firstButton) {
-				// We want 3 different functionalities for chat buttons, so we use HasItem to change button 1 between a shop and upgrade action.
+				// 这里我们设计3种不同的聊天按钮，我们使用 HasItem 这一条件判断来决定 一号按钮 是打开商店还是将蜂巢背包升级为蜂窝
 
 				if (Main.LocalPlayer.HasItem(ItemID.HiveBackpack)) {
-					SoundEngine.PlaySound(SoundID.Item37); // Reforge/Anvil sound
+					SoundEngine.PlaySound(SoundID.Item37); // 播放重铸装备音效
 
+					// 设置交谈文本，告知玩家你的装备被我敲了
 					Main.npcChatText = $"I upgraded your {Lang.GetItemNameValue(ItemID.HiveBackpack)} to a {Lang.GetItemNameValue(ModContent.ItemType<WaspNest>())}";
 
+					// 找到蜂巢背包在玩家背包中的位置
 					int hiveBackpackItemIndex = Main.LocalPlayer.FindItem(ItemID.HiveBackpack);
 					var entitySource = NPC.GetSource_GiftOrReward();
 
+					// 删掉蜂巢背包，然后赐予玩家蜂窝
 					Main.LocalPlayer.inventory[hiveBackpackItemIndex].TurnToAir();
 					Main.LocalPlayer.QuickSpawnItem(entitySource, ModContent.ItemType<WaspNest>());
 
@@ -238,7 +241,7 @@ namespace ExampleMod.Content.NPCs
 			}
 		}
 
-		// Not completely finished, but below is what the NPC will sell
+		// 以下内容还未完成，用于设置NPC的商店
 
 		// public override void SetupShop(Chest shop, ref int nextSlot) {
 		// 	shop.item[nextSlot++].SetDefaults(ItemType<ExampleItem>());
@@ -297,11 +300,12 @@ namespace ExampleMod.Content.NPCs
 			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ExampleCostume>()));
 		}
 
-		// Make this Town NPC teleport to the King and/or Queen statue when triggered.
+		// 使国王雕像或者女王雕像触发时把这个NPC传送过去
 		public override bool CanGoToStatue(bool toKingStatue) => true;
 
-		// Make something happen when the npc teleports to a statue. Since this method only runs server side, any visual effects like dusts or gores have to be synced across all clients manually.
+		// 当NPC被传送到雕像时触发一些内容（下面的这段代码），注意这些内容仅在服务端调用，任何视觉上的效果（如尘埃）需要手动在所有客户端进行同步
 		public override void OnGoToStatue(bool toKingStatue) {
+			// 这里if的内容就是在服务端执行的
 			if (Main.netMode == NetmodeID.Server) {
 				ModPacket packet = Mod.GetPacket();
 				packet.Write((byte)ExampleMod.MessageType.ExampleTeleportToStatue);
@@ -309,11 +313,12 @@ namespace ExampleMod.Content.NPCs
 				packet.Send();
 			}
 			else {
+				// 这个else的内容就是在客户端执行的视觉效果
 				StatueTeleport();
 			}
 		}
 
-		// Create a square of pixels around the NPC on teleport.
+		// 当NPC传送时在NPC周围创造一块正方形像素块
 		public void StatueTeleport() {
 			for (int i = 0; i < 30; i++) {
 				Vector2 position = Main.rand.NextVector2Square(-20, 21);
@@ -338,7 +343,7 @@ namespace ExampleMod.Content.NPCs
 			randExtraCooldown = 30;
 		}
 
-		// todo: implement
+		// 以下注释代码内容在当前版本还未实现，可能在未来版本可以使用
 		// public override void TownNPCAttackProj(ref int projType, ref int attackDelay) {
 		// 	projType = ProjectileType<SparklingBall>();
 		// 	attackDelay = 1;

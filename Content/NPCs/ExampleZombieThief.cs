@@ -51,7 +51,7 @@ namespace ExampleMod.Content.NPCs
 		}
 
 		public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
-			// 我们使用AddRange而不是Add来添加多个条目
+			// 我们使用AddRange而不是多次调用Add来添加多个条目
 			bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
 				// 设置生物图鉴中显示的生成条件
 				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Times.NightTime,
