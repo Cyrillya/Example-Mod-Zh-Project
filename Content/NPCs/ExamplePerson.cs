@@ -34,11 +34,11 @@ namespace ExampleMod.Content.NPCs
 		public int NumberOfTimesTalkedTo = 0;
 
 		public override void SetStaticDefaults() {
-			// NPC显示的名字会自动从本地化文件（localization files）中选取，对于其他NPC需要用下面这行
+			// NPC显示的名字会自动从本地化文件（localization files）中选取
 			// DisplayName.SetDefault("Example Person");
 			Main.npcFrameCount[Type] = 25; // NPC的贴图帧数
 
-			NPCID.Sets.ExtraFramesCount[Type] = 9; // 城镇NPC的额外贴图，比如坐在椅子上与其他NPC交谈
+			NPCID.Sets.ExtraFramesCount[Type] = 9; // 城镇NPC的额外帧数量，比如坐在椅子上与其他NPC交谈
 			NPCID.Sets.AttackFrameCount[Type] = 4;
 			NPCID.Sets.DangerDetectRange[Type] = 700; // 城镇NPC的索敌范围（像素）
 			NPCID.Sets.AttackType[Type] = 0;
@@ -49,7 +49,7 @@ namespace ExampleMod.Content.NPCs
 			// 影响NPC在生物图鉴中的展示状态
 			NPCID.Sets.NPCBestiaryDrawModifiers drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers(0) {
 				Velocity = 1f, // 在生物图鉴中NPC以+1图格的速度前进（向右）
-				Direction = 1 // -1为向左，1为向右。NPC默认向左展示，但是这个示例里让他向右
+				Direction = 1 // -1为向左，1为向右。在图鉴中，NPC默认是以面向左的形式绘制的，但是这个示例里我们让他向右
 				// Rotation = MathHelper.ToRadians(180) // 你也可以修改NPC的旋转角度，角度以弧度为单位，使用MathHelper便捷地将角度转换为弧度
 				// 如果你还想进一步修改NPC的展示状态，使用PreDraw
 			};
@@ -57,7 +57,7 @@ namespace ExampleMod.Content.NPCs
 			NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, drawModifiers);
 
 			// 使用NPCHappiness来设置NPC的群系偏好。你可以在本地化文件中为NPC添加不同愉悦度的交谈文本（详见本地化文件 ExampleMod/Localization/zh-Hans.hjson）
-			// 注意：下面这段代码使用了链接——一种通过SetXAffection返回调用的相同NPCHappiness实例
+			// 注意：下面使用了链式代码来设置NPC的幸福属性，由于SetXAffection总是返回一个NPCHappiness实例，所以可以使用链式代码这一技巧
 			NPC.Happiness
 				.SetBiomeAffection<ForestBiome>(AffectionLevel.Like) // 这个NPC喜欢森林
 				.SetBiomeAffection<SnowBiome>(AffectionLevel.Dislike) // 不喜欢雪地

@@ -112,7 +112,7 @@ namespace ExampleMod.Content.NPCs
 		}
 
 		public override bool NeedSaving() {
-			return StolenItems >= 10; // 当NPC持有超过10个物品时将会被保存，这个条件是为了防止占用太多内存
+			return StolenItems >= 10; // 当NPC持有超过10个物品时将会被保存，这个条件是为了防止占用太多存储空间
 		}
 
 		public override void SaveData(TagCompound tag) {

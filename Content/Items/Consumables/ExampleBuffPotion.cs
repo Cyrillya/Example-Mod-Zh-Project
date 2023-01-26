@@ -15,7 +15,7 @@ namespace ExampleMod.Content.Items.Consumables
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 20;
 
-			// 当使用有ItemUseStyleID.DrinkLiquid的物品时会出现以下颜色的尘埃效果
+			// 当使用有ItemUseStyleID.DrinkLiquid的物品时会出现以下颜色的粒子效果
 			ItemID.Sets.DrinkParticleColors[Type] = new Color[3] {
 				new Color(240, 240, 240),
 				new Color(200, 200, 200),

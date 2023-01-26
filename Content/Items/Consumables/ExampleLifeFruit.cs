@@ -32,7 +32,9 @@ namespace ExampleMod.Content.Items.Consumables
 		}
 
 		public override bool CanUseItem(Player player) {
-			// 如果有mod把最大生命值修改到了500以上，以下代码就需要修改（以下内容仅适用于原版500的最大生命值，在生命值为500时才能使用物品）
+			// mod不应当修改 statLifeMax 属性，这会破坏模组兼容性
+			// 如果有mod把 statLifeMax 修改到了500以上，其余模组的类似以下检测 statLifeMax 的代码都会失效
+			// 如果有mod这么做了，他们应当重写代码
 			// 这个检测防止玩家在达到最大生命值前使用该物品
 			return player.statLifeMax == 500 && player.GetModPlayer<ExampleLifeFruitPlayer>().exampleLifeFruits < MaxExampleLifeFruits;
 		}
@@ -53,7 +55,7 @@ namespace ExampleMod.Content.Items.Consumables
 			// 这会调用两个成就：使用增加生命上限的物品 与 血量/魔力达到最大值
 			// 但是因为我们的物品只有在完成成就后才能使用，所以不会生效，注释掉了
 			// AchievementsHelper.HandleSpecialEvent(player, 2);
-			// 当模组添加对应成就时可以使用这个方法
+			// 你可以使用类似上面这行的写法来使玩家获得原版成就，关于模组自定义的成就 TML 正在开发，或许在未来版本可以使用 ModAchievement
 			return true;
 		}
 
@@ -86,7 +88,7 @@ namespace ExampleMod.Content.Items.Consumables
 
 		// 注意：SaveData默认为空（如果不写的话就不会存，做再多修改推出世界的时候都会丢失）
 		// 阅读 https://github.com/tModLoader/tModLoader/wiki/Saving-and-loading-using-TagCompound 来获取更多关于存储和读取数据的信息
-		// 如果你想让玩家/NPC/物品拥有原版之外的属性，那就需要使用这里的方法将额外的数据进行存储，不然就会在数据保存时（推出存档、关闭存档）直接丢失
+		// 如果你想让玩家/NPC/物品拥有原版之外的属性，那就需要使用这里的方法将额外的数据进行存储，不然就会在数据保存时（退出存档、关闭存档）直接丢失
 		public override void SaveData(TagCompound tag) {
 			tag["exampleLifeFruits"] = exampleLifeFruits;
 		}

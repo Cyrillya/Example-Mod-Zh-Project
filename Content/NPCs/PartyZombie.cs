@@ -51,7 +51,7 @@ namespace ExampleMod.Content.NPCs
 			// 直接复制的话当泰拉瑞亚更新导致僵尸掉落物变化时，你这也会跟着变
 			// 直接手搓会有更大的自由度，你可以自定义很多东西，但最好先参考wiki、图鉴、源码再写
 
-			// 下面的代码是直接复制的代码，为了保证MOD间的兼容性，最好选择最底层的NPC（如复制僵尸时不选择僵尸的变体而选择普通僵尸）
+			// 下面的代码展示了如何直接复制某个NPC的掉落，为了保证MOD间的兼容性，最好选择最底层的NPC（如复制僵尸时不选择僵尸的变体而选择普通僵尸）
 			var zombieDropRules = Main.ItemDropsDB.GetRulesForNPCID(NPCID.Zombie, false); // 这个false很重要
 			foreach (var zombieDropRule in zombieDropRules) {
 				// 通过foreach语句将所有僵尸的掉落添加到我们的NPC里面
@@ -87,7 +87,7 @@ namespace ExampleMod.Content.NPCs
 		}
 
 		public override void HitEffect(int hitDirection, double damage) {
-			// 在这个NPC被击中时产生彩纸尘埃效果
+			// 在这个NPC被击中时产生彩纸粒子效果
 
 			for (int i = 0; i < 10; i++) {
 				int dustType = Main.rand.Next(139, 143);
