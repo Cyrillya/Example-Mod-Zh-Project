@@ -86,7 +86,7 @@ namespace ExampleMod.Content.Items.Consumables
 			packet.Send(toWho, fromWho);
 		}
 
-		// 注意：SaveData默认为空（如果不写的话就不会存，做再多修改推出世界的时候都会丢失）
+		// 注意：SaveData默认为空（如果不写的话就不会存，做再多修改退出世界的时候都会丢失）
 		// 阅读 https://github.com/tModLoader/tModLoader/wiki/Saving-and-loading-using-TagCompound 来获取更多关于存储和读取数据的信息
 		// 如果你想让玩家/NPC/物品拥有原版之外的属性，那就需要使用这里的方法将额外的数据进行存储，不然就会在数据保存时（退出存档、关闭存档）直接丢失
 		public override void SaveData(TagCompound tag) {
