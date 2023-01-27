@@ -7,15 +7,15 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
 using ExampleMod.Common.Configs.CustomDataTypes;
 
-// ATTENTION: Below this point is custom config UI element.
-// Be aware that mods using custom config elements will break with the next few tModLoader updates until their design is finalized.
-// You will need to be very active in updating your mod if you use these as they can break in any update.
+// 请注意：以下内容为自定义设置界面UI元素
+// 因为TML官方目前仍在对自定义设置界面UI的相关内容进行开发，如果你使用了自定义设置界面UI元素，你的mod很可能在最近的几次更新后无法兼容新代码
+// 如果你决定要使用自定义设置界面UI元素的相关内容，你最好积极更新mod以防TML更新时导致的代码失效
 
-// This file defines a custom ConfigElement based on Gradient data type
-// with custom drawing implemented that can be used in ModConfig classes.
+// 这个文件基于 Gradient 数据类型自定义 ConfigElement
+// 实现在 ModConfig 类中自定义UI的功能
 namespace ExampleMod.Common.Configs.CustomUI
 {
-	// This custom config UI element uses vanilla config elements paired with custom drawing.
+	// 这个自定义UI方法使用了内置的UI元素，并允许你自定义绘制他们
 	class GradientElement : ConfigElement
 	{
 		public override void OnBind() {
@@ -29,7 +29,7 @@ namespace ExampleMod.Common.Configs.CustomUI
 				MemberInfo.SetValue(Item, subitem);
 			}
 
-			// item is the owner object instance, memberinfo is the Info about this field in item
+			// item 是UI对象的实例，memberinfo 是 item 中关于此字段的信息
 
 			int height = 30;
 			int order = 0;
