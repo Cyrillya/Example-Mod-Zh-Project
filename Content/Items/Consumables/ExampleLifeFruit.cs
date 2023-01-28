@@ -4,13 +4,14 @@ using Terraria.ID;
 using Terraria.GameContent.Creative;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.Localization;
 
 namespace ExampleMod.Content.Items.Consumables
 {
-	// Making an item like Life Fruit (That goes above 500) involves a lot of code, as there are many things to consider.
-	// (An alternate that approaches 500 can simply follow vanilla code, however.):
-	// You can't make player.statLifeMax more than 500 (it won't save), so you'll have to maintain your extra life within your mod.
-	// Within your ModPlayer, you need to save/load a count of usages. You also need to sync the data to other players.
+	// 制作一个类似生命果 (让生命超过500) 的物品需要很多代码，因为有很多要考虑的东西
+	// （不过如果只是接近500的话会比较简单）：
+	// 你没法让 player.statLifeMax （玩家最大生命值）超过500 (超过的部分不会被保存), 所以你得在mod中保存额外的生命值
+	// 你需要在 ModPlayer 类中保存与加载相关属性，而在多人模式也要将数据同步到其他玩家
 	internal class ExampleLifeFruit : ModItem
 	{
 		public const int MaxExampleLifeFruits = 10;
@@ -20,6 +21,7 @@ namespace ExampleMod.Content.Items.Consumables
 
 		public override void SetStaticDefaults() {
 			Tooltip.SetDefault($"Permanently increases maximum life by {LifePerFruit}\nUp to {MaxExampleLifeFruits} can be used");
+			Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), $"永久增加{LifePerFruit}点生命上限\n最多使用{MaxExampleLifeFruits}次");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 10;
 		}
@@ -30,30 +32,34 @@ namespace ExampleMod.Content.Items.Consumables
 		}
 
 		public override bool CanUseItem(Player player) {
-			// Any mod that changes statLifeMax to be greater than 500 is broken and needs to fix their code.
-			// This check also prevents this item from being used before vanilla health upgrades are maxed out.
+			// mod不应当修改 statLifeMax 属性，这会破坏模组兼容性
+			// 如果有mod把 statLifeMax 修改到了500以上，其余模组的类似以下检测 statLifeMax 的代码都会失效
+			// 如果有mod这么做了，他们应当重写代码
+			// 这个检测防止玩家在达到最大生命值前使用该物品
 			return player.statLifeMax == 500 && player.GetModPlayer<ExampleLifeFruitPlayer>().exampleLifeFruits < MaxExampleLifeFruits;
 		}
 
 		public override bool? UseItem(Player player) {
-			// Do not do this: player.statLifeMax += 2;
+			// 别这样写: player.statLifeMax += 2;
+			// 尽量使用被赋值的变量而不是直接的数字，增强代码可读性也便于修改
 			player.statLifeMax2 += LifePerFruit;
 			player.statLife += LifePerFruit;
 			if (Main.myPlayer == player.whoAmI) {
-				// This spawns the green numbers showing the heal value and informs other clients as well.
+				// 生成恢复血量的绿色数字并通知其他客户端（既自动完成了多人游戏时的多端同步）
 				player.HealEffect(LifePerFruit);
 			}
 
-			// This is very important. This is what makes it permanent.
+			// 以下内容非常重要，涉及血量突破原版上限的部分
 			player.GetModPlayer<ExampleLifeFruitPlayer>().exampleLifeFruits++;
-			// This handles the 2 achievements related to using any life increasing item or getting to exactly 500 hp and 200 mp.
-			// Ignored since our item is only useable after this achievement is reached
+
+			// 这会调用两个成就：使用增加生命上限的物品 与 血量/魔力达到最大值
+			// 但是因为我们的物品只有在完成成就后才能使用，所以不会生效，注释掉了
 			// AchievementsHelper.HandleSpecialEvent(player, 2);
-			//TODO re-add this when ModAchievement is merged?
+			// 你可以使用类似上面这行的写法来使玩家获得原版成就，关于模组自定义的成就 TML 正在开发，或许在未来版本可以使用 ModAchievement
 			return true;
 		}
 
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+		// 参考 Content/ExampleRecipes.cs 中的合成表添加方法
 		public override void AddRecipes() {
 			CreateRecipe()
 				.AddIngredient<ExampleItem>()
@@ -67,8 +73,8 @@ namespace ExampleMod.Content.Items.Consumables
 		public int exampleLifeFruits;
 
 		public override void ResetEffects() {
-			// Increasing health in the ResetEffects hook in particular is important so it shows up properly in the player select menu
-			// and so that life regeneration properly scales with the bonus health
+			// 在这里增加生命上限才能在玩家的选择菜单中正确显示生命值
+			// 生命恢复效果也才会正常恢复额外的生命值
 			Player.statLifeMax2 += exampleLifeFruits * ExampleLifeFruit.LifePerFruit;
 		}
 
@@ -80,8 +86,9 @@ namespace ExampleMod.Content.Items.Consumables
 			packet.Send(toWho, fromWho);
 		}
 
-		// NOTE: The tag instance provided here is always empty by default.
-		// Read https://github.com/tModLoader/tModLoader/wiki/Saving-and-loading-using-TagCompound to better understand Saving and Loading data.
+		// 注意：SaveData默认为空（如果不写的话就不会存，做再多修改退出世界的时候都会丢失）
+		// 阅读 https://github.com/tModLoader/tModLoader/wiki/Saving-and-loading-using-TagCompound 来获取更多关于存储和读取数据的信息
+		// 如果你想让玩家/NPC/物品拥有原版之外的属性，那就需要使用这里的方法将额外的数据进行存储，不然就会在数据保存时（退出存档、关闭存档）直接丢失
 		public override void SaveData(TagCompound tag) {
 			tag["exampleLifeFruits"] = exampleLifeFruits;
 		}
