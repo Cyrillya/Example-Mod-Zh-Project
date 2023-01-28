@@ -1,4 +1,4 @@
-using Terraria;
+ï»¿using Terraria;
 using Terraria.ID;
 using Terraria.GameContent.Creative;
 using Terraria.ModLoader;
@@ -11,11 +11,11 @@ namespace ExampleMod.Content.Items.Consumables
 	{
 		public override void SetStaticDefaults() {
 			Tooltip.SetDefault("Gives a light defense buff.");
-			Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "»ñµÃÇáĞÍ·ÀÓùĞ§¹û");
+			Tooltip.AddTranslation(GameCulture.FromCultureName(GameCulture.CultureName.Chinese), "è·å¾—è½»å‹é˜²å¾¡æ•ˆæœ");
 
 			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 20;
 
-			// µ±Ê¹ÓÃÓĞItemUseStyleID.DrinkLiquidµÄÎïÆ·Ê±»á³öÏÖÒÔÏÂÑÕÉ«µÄÁ£×ÓĞ§¹û
+			// å½“ä½¿ç”¨æœ‰ItemUseStyleID.DrinkLiquidçš„ç‰©å“æ—¶ä¼šå‡ºç°ä»¥ä¸‹é¢œè‰²çš„ç²’å­æ•ˆæœ
 			ItemID.Sets.DrinkParticleColors[Type] = new Color[3] {
 				new Color(240, 240, 240),
 				new Color(200, 200, 200),
@@ -35,8 +35,8 @@ namespace ExampleMod.Content.Items.Consumables
 			Item.consumable = true;
 			Item.rare = ItemRarityID.Orange;
 			Item.value = Item.buyPrice(gold: 1);
-			Item.buffType = ModContent.BuffType<Buffs.ExampleDefenseBuff>(); // Ö¸¶¨Ê¹ÓÃÊ±»ñµÃµÄbuff
-			Item.buffTime = 5400; // buffµÄ³ÖĞøÊ±¼ä£¬5400/60=90,ËùÒÔÕâ¸öbuff»á³ÖĞø90Ãë
+			Item.buffType = ModContent.BuffType<Buffs.ExampleDefenseBuff>(); // æŒ‡å®šä½¿ç”¨æ—¶è·å¾—çš„buff
+			Item.buffTime = 5400; // buffçš„æŒç»­æ—¶é—´ï¼Œ5400/60=90,æ‰€ä»¥è¿™ä¸ªbuffä¼šæŒç»­90ç§’
 		}
 	}
 }

@@ -10,8 +10,8 @@ namespace ExampleMod.Content.Items.Consumables
 {
 	// 制作一个类似生命果 (让生命超过500) 的物品需要很多代码，因为有很多要考虑的东西
 	// （不过如果只是接近500的话会比较简单）：
-	// 你没法让player.statLifeMax （玩家最大生命值） 超过500 (超过的部分不会被保存), 所以你得在mod中保存额外的生命值
-	// 你需要在mod中保存与加载
+	// 你没法让 player.statLifeMax （玩家最大生命值）超过500 (超过的部分不会被保存), 所以你得在mod中保存额外的生命值
+	// 你需要在 ModPlayer 类中保存与加载相关属性，而在多人模式也要将数据同步到其他玩家
 	internal class ExampleLifeFruit : ModItem
 	{
 		public const int MaxExampleLifeFruits = 10;
