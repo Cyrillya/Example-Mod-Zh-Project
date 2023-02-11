@@ -68,7 +68,7 @@ namespace ExampleMod.Content.Projectiles
 			Main.instance.LoadProjectile(Projectile.type);
 			Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
 
-			// 使用不被光照影像的方式绘制射弹
+			// 使用不被光照影响的方式绘制射弹
 			Vector2 drawOrigin = new Vector2(texture.Width * 0.5f, Projectile.height * 0.5f);
 			for (int k = 0; k < Projectile.oldPos.Length; k++) {
 				Vector2 drawPos = (Projectile.oldPos[k] - Main.screenPosition) + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
